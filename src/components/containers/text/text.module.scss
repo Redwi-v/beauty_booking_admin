@@ -1,0 +1,63 @@
+@import "@/styles/apx.scss";
+@import "@/styles/breakpoints.scss";
+
+.p {
+
+  font-size: $apx-18;
+  line-height: 120%;
+  color: var(--color-grey);
+
+}
+
+.p.small {
+
+  font-size: $apx-14;
+  font-weight: 500;
+
+}
+
+.h1 {
+
+  font-size: $apx-32;
+  line-height: 120%;
+  color: var(--color-blue);
+  font-weight: 600;
+
+}
+
+.h2 {
+
+  font-size: $apx-24;
+  line-height: 120%;
+  color: var(--color-grey);
+  font-weight: 700;
+
+}
+
+@media (max-width: $mobile-breakpoint) {
+  
+  .p {
+
+    font-size: $apx-m-12;
+  
+  }
+  
+  .p.small {
+  
+    font-size: $apx-m-10;
+  
+  }
+  
+  .h1 {
+  
+    font-size: $apx-m-24;
+  
+  }
+  
+  .h2 {
+  
+    font-size: $apx-m-16;
+  
+  }
+
+}

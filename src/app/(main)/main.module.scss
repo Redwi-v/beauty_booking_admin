@@ -1,0 +1,42 @@
+@import '@/styles/breakpoints.scss';
+@import '@/styles/apx.scss';
+
+.main {
+
+  display: flex;
+  flex-direction: row-reverse;
+  width: 100%;
+  justify-content: flex-end;
+
+
+  main {
+
+    margin: 0 auto;
+    padding-left: $apx-300;
+    width: 100%;
+
+  }
+
+}
+
+
+@media (max-width: $mobile-breakpoint) {
+  
+  .main {
+
+    display: block;
+    flex-direction: row-reverse;
+    width: 100%;
+    justify-content: flex-end;
+  
+  
+    main {
+      
+      margin: 0;
+      padding-left: 0;
+
+    }
+  
+  }
+
+}

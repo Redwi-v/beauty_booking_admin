@@ -1,0 +1,60 @@
+@import '@/styles/apx.scss';
+@import '@/styles/breakpoints.scss';
+
+.button {
+ 
+  margin: auto;
+
+  width: 100%;
+
+  padding: $apx-25 $apx-30;
+  border-radius: $apx-8;
+  border: none;
+  font-size: $apx-24;
+
+  cursor: pointer;
+
+  background: var(--color-stone-300);
+  font-weight: 500;
+
+  color: #797979;
+
+  position: static !important;
+
+  
+  &.blue {
+
+
+    background: var(--color-blue);
+    color: var(--color-white);
+
+
+  }
+
+  &:disabled {
+
+    opacity: .6;
+    pointer-events: none;
+
+  }
+
+}
+.button.red {
+  background: var(--color-red);
+  color: var(--color-white);
+  
+}
+
+@media (max-width: $mobile-breakpoint) {
+
+  .button {
+ 
+  
+    padding: $apx-m-16 $apx-m-20;
+    border-radius: $apx-m-8;
+    font-size: $apx-m-14;
+
+  
+  }
+
+}

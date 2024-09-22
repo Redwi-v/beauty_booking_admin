@@ -1,0 +1,114 @@
+@import '@/styles/apx.scss';
+@import '@/styles/breakpoints.scss';
+
+.wrapper {
+
+  display: flex;
+  flex-direction: column;
+  gap: $apx-10;
+
+  .label {
+
+    color: var(--color-grey);
+    font-size: $apx-24;
+
+    span {
+      
+      color: var(--color-red);
+      
+    }
+
+  }
+
+  .input {
+
+    padding: $apx-10 $apx-16;
+    box-shadow: 0 $apx-1 $apx-2 0 rgba(77, 64, 85, 0.1);
+    border-radius: $apx-4;
+    border: $apx-1 solid var( --color-stone-300);
+
+    font-weight: 400;
+    font-size: $apx-30;
+    line-height: 143%;
+
+    &::placeholder {
+
+      color: var( --color-stone-300);
+
+    }
+
+  }
+
+  .err {
+
+    margin-top: $apx-5;
+    font-size: $apx-18;
+    color: var(--color-red);
+
+  }
+
+  textarea {
+    height: $apx-200 !important;
+    resize: none !important;
+  }
+
+}
+
+
+@media (max-width: $mobile-breakpoint) {
+
+  .wrapper {
+
+    display: flex;
+    flex-direction: column;
+    gap: $apx-m-4;
+  
+    .label {
+  
+      color: var(--color-grey);
+      font-size: $apx-m-14;
+  
+      span {
+        
+        color: var(--color-red);
+        
+      }
+  
+    }
+  
+    .input {
+  
+      padding: $apx-m-10 $apx-m-16;
+      box-shadow: 0 $apx-m-1 $apx-m-2 0 rgba(77, 64, 85, 0.1);
+      border-radius: $apx-m-4;
+      border: $apx-m-1 solid var( --color-stone-300);
+  
+      font-weight: 400;
+      font-size: $apx-m-14;
+      line-height: 143%;
+  
+      &::placeholder {
+  
+        color: var( --color-stone-300);
+  
+      }
+  
+    }
+
+    .err {
+    
+      margin-top: $apx-m-5;
+      font-size: $apx-m-12;
+      color: var(--color-red);
+      
+    }
+
+    
+  textarea {
+    height: $apx-m-100 !important;
+    resize: none !important;
+  }
+  
+  }
+
+}

@@ -1,0 +1,43 @@
+@import "@/styles/apx.scss";
+@import '@/styles/breakpoints.scss';
+
+.wrapper {
+
+  padding-top: $apx-30 !important;
+  padding-bottom: $apx-200 !important;
+
+  position: relative;
+  max-width: $apx-1100;
+
+  .controls {
+
+    display: flex;
+    gap: $apx-100;
+
+    margin-bottom: $apx-55;
+
+  }
+
+}
+
+@media (max-width: $mobile-breakpoint) {
+
+
+  .wrapper {
+
+    padding-top: $apx-m-20 !important;
+    padding-bottom: $apx-m-200;
+    max-width: none;
+
+
+    .controls {
+      gap: $apx-m-10;
+
+      margin-bottom: $apx-m-25;
+
+    }
+
+  }
+
+
+}

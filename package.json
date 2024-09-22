@@ -1,0 +1,34 @@
+{
+	"name": "beauty_booking_admin",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev --turbo",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"animate.css": "^4.1.1",
+		"axios": "^1.7.2",
+		"beauty_booking_admin": "file:",
+		"moment": "^2.30.1",
+		"next": "14.2.3",
+		"react": "^18",
+		"react-cookie": "^7.1.4",
+		"react-dom": "^18",
+		"react-hook-form": "^7.52.0",
+		"react-notifications-component": "^4.0.1",
+		"react-query": "^3.39.3",
+		"react-select": "^5.8.0",
+		"reactjs-popup": "^2.0.6",
+		"sass": "^1.77.4",
+		"zustand": "^4.5.4"
+	},
+	"devDependencies": {
+		"@types/node": "^20",
+		"@types/react": "^18",
+		"@types/react-dom": "^18",
+		"typescript": "^5"
+	}
+}

@@ -1,0 +1,207 @@
+@import "./apx.scss";
+@import "./variables.scss";
+@import "./fonts.scss";
+@import "./breakpoints.scss";
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+
+	font-family: var(--font-SF_PRO);
+	font-weight: 400;
+	box-sizing: border-box;
+
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+button {
+	cursor: pointer;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.container {
+
+	padding: 0 $apx-16;
+
+}
+
+body {
+
+	padding-bottom: $apx-70;
+
+}
+
+.popup-content {
+
+  background: rgb(255, 255, 255);
+	border-radius: $apx-10;
+  padding: $apx-30 !important;
+	width: 60%;
+
+}
+
+.popup-overlay {
+
+	overflow: auto;
+	padding: $apx-20;
+	scrollbar-width: none;
+
+}
+
+.modal_header {
+
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-bottom: $apx-20;
+
+}
+
+.close_modal {
+
+	top: $apx-5;
+	right: $apx-5;
+
+  background: var(--color-red) !important;
+  border: none;
+  color: var(--color-white);
+  font-size: $apx-30;
+
+  width: $apx-30;
+  height: $apx-30;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: $apx-5;
+  margin-left: auto;
+  
+
+
+  span {
+
+    line-height: 50%;
+
+  }
+
+}
+
+	
+.container {
+
+	max-width:  $apx-1500;
+	margin: 0 auto;
+	padding: $apx-10 !important;
+
+}
+
+
+.mb-10 {
+	margin-bottom: $apx-10;
+}
+@media (max-width: $mobile-breakpoint) {
+	.mb-10 {
+		margin-bottom: $apx-m-10;
+	}
+	.container {
+
+		width:  100%;
+		max-width: none;
+		max-width:  none;
+		margin: 0 auto;
+		padding: $apx-m-20 !important;
+
+	}
+	
+	.popup-overlay {
+
+		padding:  $apx-m-20 0;
+	
+	}
+
+	.popup-content {
+
+		background: rgb(255, 255, 255);
+		border-radius: $apx-m-5;
+		padding: $apx-m-10 !important;
+		width: 90% !important;
+	
+	}
+	
+	.modal_header {
+	
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-bottom: $apx-m-20;
+	
+	}
+	
+	.close_modal {
+	
+		top: $apx-m-5;
+		right: $apx-m-5;
+	
+		background: var(--color-red) !important;
+		border: none;
+		color: var(--color-white);
+		font-size: $apx-m-20;
+	
+		width: $apx-m-20;
+		height: $apx-m-20;
+	
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	
+		border-radius: $apx-m-5;
+		margin-left: auto;
+		
+		span {
+	
+			line-height: 50%;
+			
+		}
+	
+	}
+
+}
+

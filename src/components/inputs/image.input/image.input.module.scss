@@ -1,0 +1,87 @@
+@import '@/styles/apx.scss';
+@import '@/styles/breakpoints.scss';
+
+.content {
+
+  position: relative;
+
+  min-width: $apx-150;
+  width: $apx-150;
+  height: $apx-150;
+  border-radius: 50%;
+  display: block;
+
+  border: $apx-3 solid var(--color-blue-200);
+  overflow: hidden;
+
+  cursor: pointer;
+
+  &:hover {
+
+    img {
+      opacity: .5;
+    }
+
+    svg {
+      opacity: 1 !important;
+    }
+
+  }
+
+  input {
+    display: none  !important;
+  }
+
+  img {
+
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity .2s ;
+
+  }
+
+  svg {
+
+    width: 50%;
+    height: 50%;
+
+    transition: opacity .2s ;
+
+    opacity: 0;
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    margin: auto;
+    
+  }
+
+  svg.show {
+
+    opacity: 1;
+    
+  }
+
+
+
+
+
+}
+
+@media (max-width: $mobile-breakpoint) {
+
+  .content {
+  
+    min-width: $apx-m-90;
+    width: $apx-m-90;
+    height: $apx-m-90;
+  
+    border: $apx-m-3 solid var(--color-blue-200);
+    
+  }
+  
+}

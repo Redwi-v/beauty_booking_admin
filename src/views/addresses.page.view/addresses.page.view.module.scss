@@ -1,0 +1,87 @@
+@import '@/styles/apx.scss';
+@import '@/styles/breakpoints.scss';
+
+.content {
+	.title {
+		padding-top: $apx-m-5;
+		margin-bottom: $apx-m-5;
+	}
+
+	.search {
+		margin-bottom: $apx-m-10;
+	}
+
+	.add_button {
+		margin-bottom: $apx-m-10 !important;
+	}
+
+	.search_block {
+		display: flex;
+		width: 100%;
+		gap: $apx-20;
+		margin-bottom: $apx-20;
+
+		.search {
+			width: 100%;
+			margin-bottom: 0;
+			gap: 0;
+			span {
+				display: none;
+			}
+		}
+		button {
+			min-width: $apx-180 !important;
+			padding: 0;
+			margin: 0;
+			width: fit-content;
+		}
+	}
+
+}
+.popup_controls {
+	display: flex;
+	gap: $apx-20;
+}
+
+.form {
+	.input {
+		margin-top: $apx-20;
+	}
+
+	.popup_controls {
+		margin-top: $apx-25;
+	}
+}
+
+@media (max-width: $mobile-breakpoint) {
+
+	.form {
+		.input {
+			margin-top: $apx-m-10;
+		}
+	
+		.popup_controls {
+			margin-top: $apx-m-20;
+		}
+	}
+	
+
+  .content {
+
+    .search_block {
+      gap: $apx-m-10;
+      margin-bottom: $apx-m-10;
+  
+      button {
+        min-width: $apx-m-80 !important;
+        padding: 0;
+        margin: 0;
+        width: fit-content;
+      }
+    }
+  
+    .search {
+      margin-bottom: $apx-m-10;
+    }
+  }
+}

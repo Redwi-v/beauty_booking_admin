@@ -1,0 +1,97 @@
+@import "@/styles/apx.scss";
+@import "@/styles/breakpoints.scss";
+
+.wrapper {
+
+  display: flex;
+  gap: $apx-10;
+  align-items: center;
+  margin-top: $apx-10;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  .checkbox {
+
+    background: var(--color-stone-300);
+  
+    width: $apx-35 !important;
+    height: $apx-35 !important;
+
+    border-radius: $apx-5;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    span {
+      
+      transition: all .3s;
+      
+    }
+
+  }
+
+  .checkbox.checked {
+
+    span {
+      
+      display: block;
+      background: var(--color-blue);
+      width: $apx-25 !important;
+      height: $apx-25 !important;
+      border-radius: $apx-3;
+      
+    }
+
+  }
+
+}
+
+@media (max-width: $mobile-breakpoint ) {
+ 
+  .wrapper {
+
+    display: flex;
+    gap: $apx-m-10;
+    align-items: center;
+    margin-top: $apx-m-10;
+    background: none;
+    border: none;
+  
+    .checkbox {
+  
+      background: var(--color-stone-300);
+    
+      width: $apx-m-15 !important;
+      height: $apx-m-15 !important;
+  
+      border-radius: $apx-m-3;
+  
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    
+      span {
+        transition: all .3s;
+      }
+  
+    }
+  
+    .checkbox.checked {
+  
+      span {
+        
+        display: block;
+        background: var(--color-blue);
+        width: $apx-m-10 !important;
+        height: $apx-m-10 !important;
+        border-radius: $apx-m-2;
+        
+      }
+  
+    }
+  
+  }
+
+}

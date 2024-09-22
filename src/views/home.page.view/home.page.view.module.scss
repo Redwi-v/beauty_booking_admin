@@ -1,0 +1,218 @@
+@import '@/styles/apx';
+@import '@/styles/breakpoints';
+
+.main_info {
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  padding-top: $apx-150;
+  color: var(--color-blue) !important;
+
+  a, p {
+    color: inherit !important;
+    text-decoration: none;
+  }
+
+  .title {
+
+    font-size: $apx-100;
+    font-weight: 600;
+    color: var(--color-blue);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $apx-20;
+    margin-bottom: $apx-20;
+
+    svg {
+      width: $apx-200;
+      height: auto;
+
+      g path { fill: var(--color-blue) !important; }
+      
+    }
+
+  }
+
+  .sub_title {
+    font-size: $apx-30;
+    margin-bottom: $apx-70;
+  }
+
+  .link {
+
+    margin-bottom: $apx-20;
+    border: $apx-1 solid var(--color-blue);
+    padding: $apx-15 $apx-35;
+    border-radius: $apx-1000;
+    font-size: $apx-24;
+
+    transition: all .2s;
+  
+    @media (pointer: fine) { 
+  
+      &:hover {
+  
+        color: var(--color-white) !important;
+        background: var(--color-blue);
+  
+      }
+  
+    }
+
+    &:active {
+  
+      background: var(--color-blue-200) !important;
+      color: var(--color-white) !important;
+  
+    }
+
+  }
+
+
+  .map_points {
+
+    svg {
+
+      width: $apx-50;
+      height: auto;
+
+      position: fixed;
+      opacity: .5;
+
+    }
+
+    svg:nth-child(1) {
+
+      left: $apx-100;
+      top: $apx-50
+
+    }
+    svg:nth-child(2) {
+
+      left: $apx-560;
+      top: auto;
+      bottom: $apx-100;
+
+    }
+    svg:nth-child(3) {
+
+      left: auto;
+      right: $apx-240;
+      top: $apx-40;
+
+    }
+
+    svg:nth-child(4) {
+
+      left: $apx-330;
+      top: $apx-470;
+      width: $apx-60;
+
+    }
+
+    svg:nth-child(5) {
+
+      left: auto;
+      right: $apx-200;
+      top: auto;
+      bottom: $apx-200;
+      width: $apx-100;
+
+    }
+
+  }
+
+}
+
+@media (max-width: $mobile-breakpoint) {
+  .main_info {
+  
+    padding-top: $apx-m-50;
+  
+    .title {
+  
+      font-size: $apx-m-40;
+  
+      gap: $apx-m-20;
+      margin-bottom: $apx-m-20;
+  
+      svg {
+        width: $apx-m-100;
+      }
+  
+    }
+  
+    .sub_title {
+      font-size: $apx-m-20;
+      margin-bottom: $apx-m-70;
+    }
+  
+    .link {
+  
+      margin-bottom: $apx-m-20;
+      border: $apx-m-1 solid var(--color-blue);
+      padding: $apx-m-15 $apx-m-35;
+      border-radius: $apx-m-1000;
+      font-size: $apx-m-18;
+  
+    }
+  
+  
+    .map_points {
+  
+      svg {
+  
+        width: $apx-m-50;
+        opacity: .2;
+      }
+  
+      svg:nth-child(1) {
+  
+        left: $apx-m-100;
+        top: $apx-m-50
+  
+      }
+      svg:nth-child(2) {
+  
+        left: $apx-m-100;
+        top: auto;
+        bottom: $apx-m-100;
+  
+      }
+      svg:nth-child(3) {
+  
+        left: auto;
+        right: $apx-m-40;
+        top: $apx-m-40;
+  
+      }
+  
+      svg:nth-child(4) {
+  
+        left: $apx-m-1;
+        top: $apx-m-300;
+        width: $apx-m-60;
+  
+      }
+  
+      svg:nth-child(5) {
+  
+        left: auto;
+        right: $apx-m-20;
+        top: auto;
+        bottom: $apx-m-20;
+        width: $apx-m-100;
+  
+      }
+  
+    }
+  
+  }
+
+  
+}

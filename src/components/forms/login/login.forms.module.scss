@@ -1,0 +1,45 @@
+@import '@/styles/apx.scss';
+@import '@/styles/breakpoints.scss';
+
+.form {
+
+  .input:not(:first-child) {
+
+    margin-top: $apx-50;
+  
+  }
+  
+  .next_button {
+  
+    position: fixed !important;
+    bottom: $apx-20;
+    left: $apx-16;
+    right: $apx-16;
+  
+    width: auto;
+  
+  }
+
+}
+
+
+@media (max-width: $mobile-breakpoint) {
+  .form {
+
+    .input:not(:first-child) {
+  
+      margin-top: $apx-m-20;
+    
+    }
+    
+    .next_button {
+    
+      bottom: $apx-m-20;
+      left: $apx-m-16;
+      right: $apx-m-16;
+    
+    
+    }
+  
+  }
+}

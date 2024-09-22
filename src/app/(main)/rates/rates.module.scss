@@ -1,0 +1,82 @@
+@import '@/styles/apx.scss';
+@import '@/styles/breakpoints.scss';
+
+.content {
+	padding-left: $apx-30;
+	padding-right: $apx-30;
+
+	.title {
+		text-align: left;
+		padding-top: $apx-30;
+		font-size: $apx-40 !important;
+		text-transform: uppercase;
+	}
+
+	.list {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: $apx-40;
+    margin-top: $apx-50;
+	}
+
+	.item {
+		display: flex;
+		flex-direction: column;
+		gap: $apx-20;
+		text-align: center;
+		background: var(--color-grey);
+		padding: $apx-30;
+		border-radius: $apx-10;
+    span {
+      color: #fff;
+    }
+    span:first-child {
+      font-size: $apx-30;
+      font-weight: 700;
+      color: var(--color-blue);
+    }
+    
+	}
+}
+
+@media (max-width:$mobile-breakpoint) {
+	
+.content {
+	padding-left: $apx-m-15;
+	padding-right: $apx-m-15;
+
+	.title {
+		padding-top: $apx-m-10;
+		font-size: $apx-m-30 !important;
+		text-transform: uppercase;
+	}
+
+	.list {
+		display: grid;
+		grid-template-columns: 1fr ;
+		gap: $apx-m-10;
+    margin-top: $apx-m-20;
+		padding-bottom: $apx-m-100;
+	}
+
+	.item {
+		display: flex;
+		flex-direction: column;
+		gap: $apx-m-10;
+		text-align: center;
+		background: var(--color-grey);
+		padding: $apx-m-30;
+		border-radius: $apx-m-10;
+    span {
+      color: #fff;
+			font-size: $apx-m-25;
+    }
+    span:first-child {
+      font-size: $apx-m-30;
+      font-weight: 700;
+      color: var(--color-blue);
+    }
+    
+	}
+}
+}

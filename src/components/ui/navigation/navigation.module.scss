@@ -1,0 +1,99 @@
+@import '@/styles/apx.scss';
+@import '@/styles/breakpoints.scss';
+
+.navigation {
+
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	
+	right: auto;
+
+	width: $apx-300;
+
+	display: flex;
+	flex-direction: column;
+
+	background: var(--color-white);
+	border-right: $apx-2 solid var(--color-blue);
+	height: 100vh;
+
+	border-radius: $apx-10 $apx-10 0 0;
+	padding-top: $apx-30;
+
+	.link:not(:last-child) {
+
+		border-bottom: $apx-1 solid var(--color-blue);
+		padding-bottom: $apx-15;
+		margin-bottom: $apx-15;
+
+	}
+
+	.link {
+
+		padding-left: $apx-35;
+		padding-right: $apx-35;
+
+		display: flex;
+		gap: $apx-20;
+		align-items: center;
+
+		text-decoration: none !important;
+
+		svg {
+			width: $apx-50;
+			height: $apx-50;
+		}
+
+		span {
+			font-size: $apx-24;
+			color: var(--color-blue) !important;
+		}
+	}
+}
+
+@media (max-width: $mobile-breakpoint) {
+	.navigation {
+		position: fixed !important;
+		bottom: 0 !important;
+		left: 0 !important;
+		right: 0 !important;
+		width: 100%;
+
+		
+		display: flex;
+		justify-content: space-around;
+		flex-direction: row;
+		height: auto;
+
+		background: var(--color-white);
+		border-top: $apx-m-2 solid var(--color-blue);
+
+		border-radius: $apx-m-10 $apx-m-10 0 0;
+		padding: $apx-m-10;
+
+		.link {
+			display: flex;
+			flex-direction: column;
+			gap: $apx-m-5;
+			align-items: center;
+			
+			border-bottom: none !important;
+			padding: 0 !important;
+			margin: 0 !important;
+
+			text-decoration: none !important;
+
+			svg {
+				width: $apx-m-24;
+				height: $apx-m-24;
+			}
+
+			span {
+				font-size: $apx-m-12;
+				color: var(--color-blue) !important;
+			}
+		}
+	}
+}
