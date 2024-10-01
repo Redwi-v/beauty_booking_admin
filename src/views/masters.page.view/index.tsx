@@ -17,7 +17,6 @@ import { SalonsApi } from '@/api/salons.list';
 import Select from 'react-select';
 import { servicesListApi } from '@/api/services.list';
 import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 import moment from 'moment';
 
 interface MastersPageViewProps {
