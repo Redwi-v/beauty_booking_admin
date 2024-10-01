@@ -1,5 +1,5 @@
 'use client';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import s from './masters.page.view.module.scss';
 import List from '@/components/ui/list';
 import { useMutation, useQuery } from 'react-query';
@@ -12,15 +12,41 @@ import { Button, buttonTypes } from '@/components/inputs/button';
 import { MastersListApi } from '../../api/masters.list/index';
 import Checkbox from '@/components/inputs/checkbox';
 import { getImagePath } from '@/scripts/helpers/getImagePath';
-import { ICreateMasterBody } from '@/api/masters.list/types';
+import { ICreateMasterBody, weeksDays } from '@/api/masters.list/types';
 import { SalonsApi } from '@/api/salons.list';
 import Select from 'react-select';
+import { servicesListApi } from '@/api/services.list';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import moment from 'moment';
 
 interface MastersPageViewProps {
 	salonId: string;
 }
 
-type Inputs = ICreateMasterBody;
+interface Inputs extends Omit<ICreateMasterBody, 'startShift' | 'endShift'> {
+	startShift?: string;
+	endShift?: string;
+}
+
+const schema = yup.object({
+	startShift: yup
+		.string()
+		.matches(/(([2][0-3])|([0-1][0-9])):([0-5][0-9])/, 'Не верный формат, верный вид: 19:00'),
+	endShift: yup
+		.string()
+		.matches(/(([2][0-3])|([0-1][0-9])):([0-5][0-9])/, 'Не верный формат, верный вид: 19:00'),
+});
+
+const weeks: { [key: string]: string } = {
+	[weeksDays.Monday]: 'Пн',
+	[weeksDays.Tuesday]: 'Вт',
+	[weeksDays.Wednesday]: 'Ср',
+	[weeksDays.Thursday]: 'Чт',
+	[weeksDays.Friday]: 'Пт',
+	[weeksDays.Saturday]: 'Сб',
+	[weeksDays.Sunday]: 'Вс',
+};
 
 const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 	const {
@@ -30,9 +56,19 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 		setValue,
 		reset,
 		formState: { errors },
-	} = useForm<Inputs>();
+
+		//@ts-ignore
+	} = useForm<Inputs>({ resolver: yupResolver(schema) });
 
 	const [search, setSearch] = useState('');
+
+	const weekClickHandler = (index: number) => {
+		setActiveWeekKeys(prev => {
+			if (prev.includes(index)) return [...prev].filter(prevIndex => prevIndex !== index);
+
+			return [...prev, index];
+		});
+	};
 
 	const [activeBranchValue, setActiveBranchValue] = useState<{
 		value: number;
@@ -41,6 +77,11 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 
 	const [open, setOpen] = useState(false);
 	const [activeItemId, setActiveItemId] = useState<null | number>(null);
+
+	const { data: services } = useQuery({
+		queryKey: ['Services'],
+		queryFn: () => servicesListApi.getList(),
+	});
 
 	const [limit, setLimit] = useState(5);
 
@@ -61,12 +102,52 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 		},
 	});
 
+	const activeWeeks: number[] =
+		data?.masters
+			.find(item => item.id === activeItemId)
+			?.workingDays.map(item => +weeksDays[item]) || [];
+
+	const [activeWeekKeys, setActiveWeekKeys] = useState<number[]>([
+		weeksDays.Monday,
+		weeksDays.Tuesday,
+		weeksDays.Wednesday,
+		weeksDays.Thursday,
+		weeksDays.Friday,
+	]);
+
+	useEffect(() => {
+		if (!activeItemId)
+			return setActiveWeekKeys([
+				weeksDays.Monday,
+				weeksDays.Tuesday,
+				weeksDays.Wednesday,
+				weeksDays.Thursday,
+				weeksDays.Friday,
+			]);
+
+		setActiveWeekKeys(activeWeeks);
+	}, [activeItemId]);
+
 	const onSubmit: SubmitHandler<Inputs> = data => {
-		if (!activeBranchValue || !data) return;
+		if (!activeBranchValue || !data || !data.startShift || !data.endShift) return;
+
+		console.log(data);
+
+		const startShiftDate = moment();
+		startShiftDate.hours(+data.startShift.split(':')[0]);
+		startShiftDate.minutes(+data.startShift.split(':')[1]);
+
+		const endShiftDate = moment();
+		endShiftDate.hours(+data.endShift.split(':')[0]);
+		endShiftDate.minutes(+data.endShift.split(':')[1]);
+
 		const formData: ICreateMasterBody = {
 			...data,
 			telegramId: data.telegramId,
 			salonBranchId: +activeBranchValue?.value,
+			workingDays: activeWeekKeys.map(item => weeksDays[item]),
+			startShift: startShiftDate.toDate(),
+			endShift: endShiftDate.toDate(),
 		};
 
 		if (activeItemId) {
@@ -126,6 +207,8 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 
 		setValue('speciality', activeMaster.speciality);
 		setValue('canChangeSchedule', activeMaster.canChangeSchedule);
+		setValue('startShift', moment(activeMaster.startShift).format('HH:mm'));
+		setValue('endShift', moment(activeMaster.endShift).format('HH:mm'));
 	};
 
 	const closeModal = () => {
@@ -134,6 +217,29 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 		setActiveBranchValue(null);
 		setOpen(false);
 	};
+
+	const activeServicesOption = data?.masters.find(item => item.id === activeItemId)?.masterService
+		?.length
+		? data?.masters
+				.find(item => item.id === activeItemId)
+				?.masterService.map(value => ({
+					value: value.id,
+					label: value.name,
+				}))
+		: [];
+
+	let servicesOptions: { value: number; label: string }[] = [];
+
+	if (services) {
+		const allOptions: any = [];
+		services?.data.list
+			.map(item => item.services)
+			.forEach(arr => {
+				allOptions.push(...arr.map(item => ({ value: item.id, label: item.name })));
+			});
+
+		servicesOptions = allOptions;
+	}
 
 	const mappedMastersList = data?.masters
 		? data?.masters.map(masterItemData => ({
@@ -149,6 +255,13 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 				),
 		  }))
 		: [];
+
+	useEffect(() => {
+		setValue(
+			'servicesIdArray',
+			activeServicesOption?.map(item => item.value),
+		);
+	}, [activeItemId, data]);
 
 	return (
 		<div className='container'>
@@ -238,8 +351,9 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 							inputParams={{ ...register('telegramId') }}
 						/>
 
-						<H2 className='mb-10'>Выберете точку</H2>
+						<H2 className={s.title}>Выберете точку</H2>
 						<Select
+							className='mb-10'
 							onChange={data => {
 								if (!data) return;
 								setActiveBranchValue({
@@ -260,11 +374,65 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 							}
 						/>
 
-						<Checkbox
-							checked={watch('canChangeSchedule')}
-							setChecked={(value: boolean) => setValue('canChangeSchedule', value)}
-							label='Разрешено менять расписание?'
+						<H2 className={s.title}>Выберете услуги</H2>
+						<Select
+							isMulti
+							name='colors'
+							onChange={value => {
+								const newValue = value
+									.map(service => service?.value)
+									.filter(value => value !== undefined);
+								setValue('servicesIdArray', newValue);
+							}}
+							value={watch('servicesIdArray')?.map(
+								id =>
+									({ value: id, label: servicesOptions.find(service => service.value === id) }
+										.label),
+							)}
+							options={servicesOptions}
+							className='basic-multi-select'
+							classNamePrefix='select'
 						/>
+
+						<H2 className={`${s.title}`}>Рабочии дни</H2>
+						<ul className={s.weeks}>
+							{Object.keys(weeks).map((key, index) => (
+								<li key={key}>
+									<button
+										onClick={() => weekClickHandler(index)}
+										className={`${activeWeekKeys.includes(+key) && s.active}`}
+									>
+										{weeks[key]}
+									</button>
+								</li>
+							))}
+						</ul>
+						<H2 className={`${s.title}`}>Рабочее время</H2>
+						<div className={s.set_work_time}>
+							<Input
+								errMessage={errors.startShift?.message}
+								inputParams={{
+									placeholder: 'Начало 09:00',
+									...register('startShift'),
+								}}
+							/>
+							<span>:</span>
+							<Input
+								errMessage={errors.endShift?.message}
+								inputParams={{
+									placeholder: 'Конец 18:00',
+									...register('endShift'),
+								}}
+							/>
+						</div>
+
+						<div style={{ marginTop: 15 }}>
+							<Checkbox
+								checked={watch('canChangeSchedule')}
+								setChecked={(value: boolean) => setValue('canChangeSchedule', value)}
+								label='Разрешено менять расписание?'
+							/>
+						</div>
 
 						<Button
 							type={buttonTypes.blue}

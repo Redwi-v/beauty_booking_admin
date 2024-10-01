@@ -16,7 +16,7 @@ export const servicesListApi = {
 		return apiInstance.patch<ICreateServiceRes>(`/services/${serviceId}`, body);
 	},
 
-	getList(params: IGetServicesListParams) {
+	getList(params?: IGetServicesListParams) {
 		return apiInstance.get<IGetServicesListRes>('/services', { params });
 	},
 

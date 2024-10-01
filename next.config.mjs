@@ -9,6 +9,10 @@ const nextConfig = {
       },
       {
         hostname: 'https://encrypted-tbn0.gstatic.com'
+      },
+
+      {
+        hostname: 'http://mybeautybooking.ru'
       }
     ]
   }

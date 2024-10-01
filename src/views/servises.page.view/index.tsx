@@ -49,13 +49,22 @@ const ServicesPageView: FC<ServicesPageViewProps> = ({ id: salonId }) => {
 
 	const { data, refetch } = useQuery({
 		queryKey: ['servicesList', limit],
-		queryFn: () => servicesListApi.getList({ search }),
+		queryFn: () => servicesListApi.getList({ search: search || undefined }),
+		keepPreviousData: true,
+	});
+
+	const { data: tagsListData, refetch: refetchTags } = useQuery({
+		queryKey: ['tagsList'],
+		queryFn: () => servicesListApi.getAllTags(),
 		keepPreviousData: true,
 	});
 
 	const createTagMutation = useMutation({
 		mutationFn: (tag: string) => servicesListApi.addTag(tag),
-		onSuccess: () => refetch(),
+		onSuccess: () => {
+			refetch();
+			refetchTags();
+		},
 	});
 	const deleteTagMutation = useMutation({
 		mutationFn: (tagName: string) => servicesListApi.deleteTag(tagName),
@@ -261,8 +270,8 @@ const ServicesPageView: FC<ServicesPageViewProps> = ({ id: salonId }) => {
 								createTagMutation.mutate(value);
 							}}
 							options={
-								data?.data
-									? data.data.list.map(branch => {
+								tagsListData?.data
+									? tagsListData.data.map(branch => {
 											return {
 												value: branch.tagName,
 												label: (

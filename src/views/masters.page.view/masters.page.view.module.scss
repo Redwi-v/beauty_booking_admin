@@ -10,6 +10,35 @@
 .add_button {
 	margin-bottom: $apx-15 !important;
 }
+
+
+.set_work_time {
+	display: flex;
+	gap: $apx-10;
+	margin-top: $apx-20;
+
+	span {
+		margin-top: $apx-15;
+	}
+}
+.weeks {
+	display: flex;
+	width: 100%;
+	gap: $apx-10;
+
+	button {
+		background: var(--color-stone-400);
+		border: none;
+		border-radius: $apx-10;
+		padding: $apx-10;
+		color: #fff;
+	}
+
+	button.active {
+		background: var(--color-green);
+	}
+}
+
 .search_block {
   display: flex;
   width: 100%;
@@ -127,6 +156,8 @@
 	
 	}
 	
+
+
 	.form {
 	
 		.input {
