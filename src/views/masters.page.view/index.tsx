@@ -131,7 +131,6 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 	const onSubmit: SubmitHandler<Inputs> = data => {
 		if (!activeBranchValue || !data || !data.startShift || !data.endShift) return;
 
-		console.log(data);
 
 		const startShiftDate = moment();
 		startShiftDate.hours(+data.startShift.split(':')[0]);
@@ -382,6 +381,8 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 								const newValue = value
 									.map(service => service?.value)
 									.filter(value => value !== undefined);
+
+								//@ts-ignore
 								setValue('servicesIdArray', newValue);
 							}}
 							value={watch('servicesIdArray')?.map(
