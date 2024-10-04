@@ -3,7 +3,8 @@ import { Store, iNotification } from 'react-notifications-component';
 import { notificationSettings } from '../constants/notification.settings';
 
 const apiInstance = axios.create({
-	baseURL: 'http://mybeautybooking.ru:8888',
+	baseURL: 'https://api.mybeautybooking.ru',
+	// baseURL: 'http://localhost:8888',
 	timeout: 10000,
 	withCredentials: true,
 });

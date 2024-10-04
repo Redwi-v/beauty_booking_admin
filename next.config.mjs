@@ -12,7 +12,7 @@ const nextConfig = {
       },
 
       {
-        hostname: 'http://mybeautybooking.ru'
+        hostname: 'https://api.mybeautybooking.ru'
       }
     ]
   }
