@@ -121,8 +121,8 @@ const SalonPageView: FC<SalonPageViewProps> = ({ id }) => {
 				<div className={s.app_link}>
 					<H2>Ссылка:</H2>
 					<Link
-						href={`https://t.me/beauty_booking123123_bot/beautyBooking?startapp=${id}`}
-					>{`https://t.me/beauty_booking123123_bot/beautyBooking?startapp=${id}`}</Link>
+						href={`${process.env.TELEGRAM_APP_URL}?startapp=${id}`}
+					>{`${process.env.TELEGRAM_APP_URL}?startapp=${id}`}</Link>
 				</div>
 				<div className={s.controls}>
 					<Button

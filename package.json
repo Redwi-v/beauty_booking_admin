@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3.9.0",
+		"@next/env": "^14.2.14",
 		"animate.css": "^4.1.1",
 		"axios": "^1.7.2",
 		"beauty_booking_admin": "file:",
