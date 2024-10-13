@@ -3,15 +3,15 @@ import { hostname } from 'os';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    // TELEGRAM_APP_URL: " https://t.me/beauty_booking123123_bot/beautyBooking",
-    // API_URL: " https://api.mybeautybooking.ru",
+    TELEGRAM_APP_URL: " https://t.me/beauty_booking123123_bot/beautyBooking",
+    API_URL: " https://api.mybeautybooking.ru",
 
     //  DEV
 
-    TELEGRAM_APP_URL: "https://t.me/beauty_client_bot/beauty_client",
-    API_URL: "http://localhost:8888",
+    // TELEGRAM_APP_URL: "https://t.me/beauty_client_bot/beauty_client",
+    // API_URL: "http://localhost:8888",
   },
-  images: {
+  images: { 
     remotePatterns: [
       {
         hostname: 'localhost',
