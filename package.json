@@ -9,14 +9,18 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@devexpress/dx-react-core": "^4.0.9",
+		"@devexpress/dx-react-scheduler": "^4.0.9",
 		"@hookform/resolvers": "^3.9.0",
 		"@next/env": "^14.2.14",
+		"@types/react-big-calendar": "^1.8.12",
 		"animate.css": "^4.1.1",
 		"axios": "^1.7.2",
 		"beauty_booking_admin": "file:",
 		"moment": "^2.30.1",
 		"next": "14.2.3",
 		"react": "^18",
+		"react-big-calendar": "^1.15.0",
 		"react-cookie": "^7.1.4",
 		"react-dom": "^18",
 		"react-hook-form": "^7.52.0",

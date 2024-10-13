@@ -1,0 +1,35 @@
+.list {
+
+  display: flex;
+  overflow-x: auto;
+  padding: 25px;
+  gap: 30px;
+
+  .list_item {
+  
+    box-shadow: 0px 0px 20px #00000026;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+
+    display: flex;
+
+    img {
+      border-radius: 10px;
+    }
+
+  }
+
+  .list_item.active {
+    transform: scale(1.09);
+  }
+
+  .info {
+    margin-left: 10px;
+  }
+
+}
+
+.calendar {
+  height: 800px !important;
+}

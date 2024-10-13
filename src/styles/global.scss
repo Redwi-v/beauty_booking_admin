@@ -3,6 +3,10 @@
 @import "./fonts.scss";
 @import "./breakpoints.scss";
 
+@import 'react-big-calendar/lib/sass/styles';
+@import 'react-big-calendar/lib/addons/dragAndDrop/styles'; // if using DnD
+
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -205,3 +209,6 @@ body {
 
 }
 
+.myCustomHeight {
+	height: 800px;
+}

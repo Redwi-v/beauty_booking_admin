@@ -56,6 +56,14 @@ const Navigation: FC<NavigationProps> = ({ className }) => {
 				<ListIcon />
 				<span>Тарифы</span>
 			</Link>
+
+			<Link
+				className={s.link}
+				href={'/schedule'}
+			>
+				<ListIcon />
+				<span>Расписание</span>
+			</Link>
 		</div>
 	);
 };
