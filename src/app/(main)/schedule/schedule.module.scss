@@ -1,3 +1,6 @@
+@import '@/styles/breakpoints.scss';
+@import '@/styles/apx.scss';
+
 .list {
 
   display: flex;
@@ -16,6 +19,7 @@
 
     img {
       border-radius: 10px;
+      object-fit: cover;
     }
 
   }
@@ -31,5 +35,58 @@
 }
 
 .calendar {
-  height: 800px !important;
+
+}
+
+.event_wrapper {
+  background: none !important;
+
+}
+
+.schedule_event {
+
+  border: none;
+  ::before{
+    background: transparent !important;
+  }
+
+  display: flex;
+  flex-direction: column; 
+  gap: $apx-4;
+
+  background: var(--color-green);
+  width: 100%;
+  border-radius: $apx-10;
+  padding: $apx-8;
+  color: #242424;
+  font-size: $apx-16;
+  font-weight: 500;
+
+}
+
+.popup_info_services {
+
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: $apx-5;
+  gap: $apx-10;
+
+  li {
+    padding: $apx-10;
+    width: fit-content;
+    border-radius: $apx-5;
+  
+    display: flex;
+    flex-direction: column;
+    gap: $apx-2;
+    background: var(--color-green);
+
+  }
+  
+}
+
+.info_popup_controls {
+  display: flex;
+  margin-top: $apx-20;
+  gap: $apx-20;
 }

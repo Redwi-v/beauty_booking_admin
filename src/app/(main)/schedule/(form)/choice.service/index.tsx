@@ -1,0 +1,1 @@
+export { ChoiceServiceView } from './ui/choice.service.view'

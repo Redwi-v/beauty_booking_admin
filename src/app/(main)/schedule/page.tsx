@@ -8,10 +8,9 @@ import Image from 'next/image';
 import { getImagePath } from '@/scripts/helpers/getImagePath';
 import { MastersListApi } from '@/api/masters.list';
 
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
-
-const localizer = momentLocalizer(moment); // or globalizeLocalizer
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
+import Calendar from './Calendar';
 
 interface IPageProps {}
 
@@ -26,10 +25,11 @@ const Page: FC<IPageProps> = props => {
 		queryFn: () => SalonsApi.getList(),
 	});
 
-	const { data: masters } = useQuery({
+	const { data: masters, refetch: refetchMasters } = useQuery({
 		queryKey: ['Masters', activeSalonId],
 		queryFn: () => MastersListApi.getList(activeSalonId!),
 		enabled: !!activeSalonId,
+		keepPreviousData: true,
 	});
 
 	return (
@@ -48,6 +48,8 @@ const Page: FC<IPageProps> = props => {
 									width={50}
 									height={50}
 									alt='salon'
+									quality={100}
+									objectFit='cover'
 									src={salon.logoUrl ? getImagePath(salon.logoUrl) : '/images/no_avatar.jpg'}
 								/>
 
@@ -58,7 +60,6 @@ const Page: FC<IPageProps> = props => {
 						);
 					})}
 				</ul>
-
 				{activeSalonId && (
 					<>
 						<h2 className='h2'>Выберете мастера</h2>
@@ -87,23 +88,15 @@ const Page: FC<IPageProps> = props => {
 						</ul>
 					</>
 				)}
-
-				<MyCalendar />
+				{activeMasterId && (
+					<Calendar
+						refetch={refetchMasters}
+						master={masters?.masters.find(master => master.id === activeMasterId)!}
+					/>
+				)}
 			</div>
 		</main>
 	);
 };
-
-const MyCalendar = () => (
-	<div className='myCustomHeight'>
-		<Calendar
-			localizer={localizer}
-			startAccessor='start'
-			endAccessor='end'
-			showMultiDayTimes
-			step={60}
-		/>
-	</div>
-);
 
 export default Page;

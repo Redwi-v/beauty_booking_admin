@@ -53,6 +53,33 @@ export interface IMaster {
 			salonBranchId: number;
 		};
 	};
+
+	Booking: IBooking[];
+}
+
+export interface IBooking {
+	id: number;
+	createdAt: string;
+	updatedAt: string;
+	time: string;
+	masterAccountId: number;
+	status: string;
+	clientTelegramId: string;
+	clientName: string;
+	clientPhone: string;
+	clientComment: any;
+	masterComment: string;
+	adminComment: any;
+	salonId: number;
+	salonBranchId: number;
+	services: Array<{
+		id: number;
+		price: number;
+		time: number;
+		name: string;
+		tagName: string;
+		salonId: number;
+	}>;
 }
 
 export interface ICreateMasterBody {
@@ -79,4 +106,10 @@ export interface IUpdateMasterBody {
 	servicesIdArray?: number[];
 	telegramId?: string;
 	salonBranchId?: number;
+}
+
+export interface IGetFreeTimeParams {
+	date?: Date;
+	masterId?: number | string;
+	servicesIdList?: string[];
 }

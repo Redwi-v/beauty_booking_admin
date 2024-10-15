@@ -1,55 +1,271 @@
-import React, { Fragment, ReactElement, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import moment from 'moment';
-import { Calendar, Views, DateLocalizer, momentLocalizer } from 'react-big-calendar';
+import FullCalendar from '@fullcalendar/react';
+import { FC, useEffect, useState } from 'react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import s from './schedule.module.scss';
+import { EventContentArg, EventInput, EventSourceInput } from '@fullcalendar/core/index.js';
+import moment from 'moment';
+import { IBooking, IMaster } from '@/api/masters.list/types';
+import { Tooltip } from 'react-tooltip';
+import Popup from 'reactjs-popup';
+import { H2, P } from '@/components/containers/text';
+import { time } from 'console';
+import { Button, buttonTypes } from '@/components/inputs/button';
+import { useMutation, useQuery } from 'react-query';
+import { bookingApi } from '@/api/booking';
+import { ChoiceServiceView } from './(form)/choice.service';
+import { useAppointmentStore } from './(form)/appointment/model/appointment.store';
+import { TimeListPicker } from '@/components/ui/time.picker.list/ui/time.picker';
+import { MastersListApi } from '@/api/masters.list';
+import { EntryConfirmView } from './(form)/entry.confirm.view';
+interface ICalendarProps {
+	master: IMaster;
+	refetch: () => void;
+}
 
-const mLocalizer = momentLocalizer(moment);
+const Calendar: FC<ICalendarProps> = props => {
+	const { master, refetch } = props;
 
-const ColoredDateCellWrapper = ({ children }: { children: ReactElement }) =>
-	React.cloneElement(React.Children.only(children), {
-		style: {
-			backgroundColor: 'lightblue',
+	const deleteBookingMutation = useMutation({
+		mutationFn: (id: number) => bookingApi.delete(id),
+		onSuccess: () => {
+			setInfoPopUpIsOpen(null);
+			refetch();
 		},
 	});
 
-export default function Basic({ localizer = mLocalizer, showDemoLink = true, ...props }) {
-	const { components, defaultDate, max, views } = useMemo(
-		() => ({
-			components: {
-				timeSlotWrapper: ColoredDateCellWrapper,
-			},
-			defaultDate: new Date(2015, 3, 1),
-			//@ts-ignore
-			max: dates.add(dates.endOf(new Date(2015, 17, 1), 'day'), -1, 'hours'),
-			//@ts-ignore
-			views: Object.keys(Views).map(k => Views[k]),
-		}),
-		[],
-	);
+	const [events, setEvents] = useState<EventInput[]>([]);
+
+	const [step, setStep] = useState(1);
+
+	useEffect(() => {
+		setEvents(
+			master.Booking.map(booking => {
+				return { date: booking.time, id: String(booking.id) };
+			}),
+		);
+	}, [master]);
+
+	const [infoPopUpIsOpen, setInfoPopUpIsOpen] = useState<null | IBooking>(null);
+
+	const openInfoPopUp = (event: IBooking) => {
+		setInfoPopUpIsOpen(event);
+	};
+
+	function renderEventContent(eventInfo: EventContentArg) {
+		const activeEvent = master.Booking.find(booking => +eventInfo.event.id === booking.id);
+
+		if (!activeEvent) return;
+
+		const allMinutes = activeEvent.services.reduce((prev, service) => {
+			return service.time + prev;
+		}, 0);
+
+		return (
+			<button
+				onClick={() => openInfoPopUp(activeEvent)}
+				className={s.schedule_event}
+			>
+				<div>Клиент: {activeEvent.clientName}</div>
+				<div>
+					Время: {moment(activeEvent.time).format('HH:mm')} -
+					{moment(activeEvent.time).add({ minutes: allMinutes }).format('HH:mm')}
+				</div>
+			</button>
+		);
+	}
+
+	const [addEventPopupIsOpen, setAddEventPopupIsOpen] = useState(false);
+
+	const allMinutes = infoPopUpIsOpen
+		? infoPopUpIsOpen.services.reduce((prev, service) => {
+				return service.time + prev;
+		  }, 0)
+		: 0;
+
+	const {
+		date,
+		setDateAndTime,
+		services,
+		time: stateTime,
+		setMasterId,
+		setSalonBranch,
+		setServices,
+		clear,
+	} = useAppointmentStore(store => store);
+
+	const handleDateClick = (arg: DateClickArg) => {
+		clear();
+		setStep(1);
+		setTime('');
+		setDateAndTime(arg.dateStr, null);
+		setAddEventPopupIsOpen(true);
+	};
+
+	const [time, setTime] = useState(stateTime || '');
+
+	const { data: freeTime } = useQuery({
+		queryKey: ['FreeTime', date, master.id, services],
+		queryFn: () =>
+			MastersListApi.getFreeTime({
+				date: moment(date).toDate(),
+				masterId: master.id,
+				servicesIdList: services.map(item => String(item)),
+			}),
+	});
 
 	return (
-		<Fragment>
-			<div
-				className=''
-				{...props}
+		<>
+			<FullCalendar
+				viewClassNames={s.calendar}
+				plugins={[dayGridPlugin, interactionPlugin]}
+				height={'auto'}
+				buttonText={{
+					month: 'Месяц',
+					week: 'Неделя',
+					today: 'Сегодня',
+				}}
+				initialView='dayGridMonth'
+				dateClick={handleDateClick}
+				headerToolbar={{
+					left: 'prev,next today',
+					center: 'title',
+					right: 'dayGridMonth,dayGridWeek',
+				}}
+				initialDate='2024-10-12'
+				locale={'ru'}
+				eventClassNames={s.event_wrapper}
+				stickyHeaderDates
+				events={[
+					{
+						start: '2024-10-11T10:00:00',
+						display: 'background',
+						color: '#ff9f89',
+						title: 'hello',
+					},
+					{
+						start: '2024-10-13T10:00:00',
+						display: 'background',
+						color: '#ff9f89',
+					},
+					{
+						start: '2024-10-24',
+						end: '2024-10-28',
+						overlap: false,
+						display: 'background',
+					},
+					{
+						start: '2024-10-06',
+						end: '2024-10-08',
+						overlap: false,
+						display: 'background',
+					},
+				]}
+			/>
+
+			<Popup
+				open={!!infoPopUpIsOpen}
+				closeOnDocumentClick
+				closeOnEscape
+				onClose={() => {
+					setInfoPopUpIsOpen(null);
+				}}
 			>
-				<Calendar
-					className={s.calendar}
-					defaultDate={defaultDate}
-					localizer={localizer}
-					max={max}
-					showMultiDayTimes
-					dayLayoutAlgorithm='no-overlap'
-					step={60}
-					views={views}
-					timeslots={12}
-				/>
-			</div>
-		</Fragment>
+				<div className='modal'>
+					<H2 className='modal_header '>
+						Запись на {moment(infoPopUpIsOpen?.time).locale('ru').format('DD MMMM YYYY HH:mm')}
+					</H2>
+				</div>
+
+				<P>Имя клинета: {infoPopUpIsOpen?.clientName}</P>
+				<P>
+					Время: {moment(infoPopUpIsOpen?.time).format('HH:mm')} -
+					{moment(infoPopUpIsOpen?.time).add({ minutes: allMinutes }).format('HH:mm')}
+				</P>
+				<P>Процедуры:</P>
+				<ul className={s.popup_info_services}>
+					{infoPopUpIsOpen &&
+						infoPopUpIsOpen.services.map(item => {
+							return (
+								<li>
+									<P>{item.name}</P>
+									<P>{item.price}р</P>
+									<P>{moment().hour(0).minutes(0).add({ minutes: item.time }).format('HH:mm')}ч</P>
+								</li>
+							);
+						})}
+				</ul>
+
+				<div className={s.info_popup_controls}>
+					<Button
+						type={buttonTypes.blue}
+						buttonParams={{ onClick: () => setAddEventPopupIsOpen(true) }}
+					>
+						Изменить
+					</Button>
+					<Button
+						type={buttonTypes.red}
+						buttonParams={{
+							onClick: () => deleteBookingMutation.mutate(infoPopUpIsOpen?.id!),
+						}}
+					>
+						Отменить
+					</Button>
+				</div>
+			</Popup>
+
+			<Popup
+				open={addEventPopupIsOpen}
+				closeOnDocumentClick
+				closeOnEscape
+				onClose={() => setAddEventPopupIsOpen(false)}
+			>
+				{step === 1 && (
+					<div>
+						<div className='modal'>
+							<H2 className='modal_header '>
+								Запись на {moment(date).locale('ru').format('DD MMMM YYYY ')}
+							</H2>
+						</div>
+						<ChoiceServiceView />
+						<div>
+							<TimeListPicker
+								steps={freeTime?.data?.freeTime || []}
+								time={time || undefined}
+								setTime={setTime}
+							/>
+						</div>
+						<Button
+							buttonParams={{
+								onClick: () => {
+									if (!date || !time) return;
+
+									setDateAndTime(date.toString(), time);
+									setMasterId(master.id);
+
+									//@ts-ignore
+									setSalonBranch(master.salonBranch);
+									setStep(2);
+								},
+							}}
+							type={date && time ? buttonTypes.blue : undefined}
+						>
+							Добавить запись
+						</Button>
+					</div>
+				)}
+
+				{step === 2 && (
+					<div className='modal'>
+						<EntryConfirmView
+							branchId={master.salonBranchId}
+							salonId={master.salonBranchId}
+						/>
+					</div>
+				)}
+			</Popup>
+		</>
 	);
-}
-Basic.propTypes = {
-	localizer: PropTypes.instanceOf(DateLocalizer),
-	showDemoLink: PropTypes.bool,
 };
+
+export default Calendar;

@@ -2,10 +2,7 @@
 @import "./variables.scss";
 @import "./fonts.scss";
 @import "./breakpoints.scss";
-
-@import 'react-big-calendar/lib/sass/styles';
-@import 'react-big-calendar/lib/addons/dragAndDrop/styles'; // if using DnD
-
+@import 'react-tooltip/dist/react-tooltip.css';
 
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -36,6 +33,10 @@ time, mark, audio, video {
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
+}
+
+input {
+	box-sizing: border-box;
 }
 
 button {
@@ -211,4 +212,13 @@ body {
 
 .myCustomHeight {
 	height: 800px;
+}
+
+.fc-day-past {
+	opacity: .4;
+	pointer-events: none;
+}
+
+.flex {
+	display: flex;
 }

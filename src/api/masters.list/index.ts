@@ -1,5 +1,11 @@
 import apiInstance from "../instance"
-import { ICreateMasterBody, IGetMastersListRes, IMaster, IUpdateMasterBody } from './types';
+import {
+	ICreateMasterBody,
+	IGetFreeTimeParams,
+	IGetMastersListRes,
+	IMaster,
+	IUpdateMasterBody,
+} from './types';
 
 export const MastersListApi = {
 	async getList(salonId: number | string, search?: string) {
@@ -31,5 +37,9 @@ export const MastersListApi = {
 	async delete(id: number) {
 		const res = await apiInstance.delete<IMaster>(`/master/${id}`);
 		return res.data;
+	},
+
+	async getFreeTime(params: IGetFreeTimeParams) {
+		return apiInstance.get<{ freeTime: string[] }>('/master/time/freeTime', { params });
 	},
 };

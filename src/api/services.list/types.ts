@@ -15,6 +15,7 @@ export interface ICreateServiceRes extends ICreateServiceBody {
 export interface IGetServicesListParams {
 	tagName?: string;
 	search?: string;
+	masterId?: number;
 }
 
 export interface IGetServicesListRes {

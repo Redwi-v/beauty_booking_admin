@@ -1,0 +1,42 @@
+.time_picker {
+
+  margin-top: 50px;
+  padding-bottom: 200px;
+
+  h2 {
+    color: var(--color-stone-400);
+  }
+
+
+  .list {
+
+    padding: 0;
+    list-style: none;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    display: flex;
+    margin-top: 10px;
+
+  }
+
+  .button {
+
+    background: var(--color-stone-300);
+    border: none;
+    padding: 8px 20px;
+    border-radius: 60px;
+    font-weight: 500;
+
+    font-size: 16px;
+    font-weight: 400;
+    color: #797979;
+
+  }
+
+  .button.active {
+    background: var(--color-blue);
+    color: var(--color-white);
+  }
+
+}
