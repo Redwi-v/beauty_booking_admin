@@ -110,11 +110,11 @@ const Calendar: FC<ICalendarProps> = props => {
 	const [time, setTime] = useState(stateTime || '');
 
 	const { data: freeTime } = useQuery({
-		queryKey: ['FreeTime', date, master.id, services],
+		queryKey: ['FreeTime', date, master?.id, services],
 		queryFn: () =>
 			MastersListApi.getFreeTime({
 				date: moment(date).toDate(),
-				masterId: master.id,
+				masterId: master?.id,
 				servicesIdList: services.map(item => String(item)),
 			}),
 	});
@@ -259,7 +259,7 @@ const Calendar: FC<ICalendarProps> = props => {
 									if (!date || !time) return;
 
 									setDateAndTime(date.toString(), time);
-									setMasterId(master.id);
+									setMasterId(master?.id);
 
 									//@ts-ignore
 									setSalonBranch(master.salonBranch);
