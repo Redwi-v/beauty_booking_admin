@@ -282,7 +282,7 @@ const Calendar: FC<ICalendarProps> = props => {
 								refetch();
 							}}
 							branchId={master.salonBranchId}
-							salonId={master.salonBranchId}
+							salonId={master.salonId}
 						/>
 					</div>
 				)}

@@ -83,6 +83,13 @@ const SalonPageView: FC<SalonPageViewProps> = ({ id }) => {
 		},
 	});
 
+	const deleteSalonMutation = useMutation({
+		mutationFn: () => SalonsApi.delete(id),
+		onSuccess() {
+			router.push('/salons');
+		},
+	});
+
 	return (
 		<main className={`${s.main}`}>
 			<div className={s.header}>
@@ -207,6 +214,15 @@ const SalonPageView: FC<SalonPageViewProps> = ({ id }) => {
 							}}
 						>
 							Сохранить
+						</Button>
+						<Button
+							type={buttonTypes.red}
+							buttonParams={{
+								className: s.send_button,
+								onClick: () => deleteSalonMutation.mutate(),
+							}}
+						>
+							Удалить
 						</Button>
 					</div>
 				</div>
