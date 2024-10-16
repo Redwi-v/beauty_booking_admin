@@ -1,6 +1,6 @@
 'use client';
 import { SalonsApi } from '@/api/salons.list';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import s from './schedule.module.scss';
@@ -22,6 +22,10 @@ const Page: FC<IPageProps> = props => {
 		queryKey: ['Salons'],
 		queryFn: () => SalonsApi.getList(),
 	});
+
+	useEffect(() => {
+		setActiveMasterId(null);
+	}, [activeSalonId]);
 
 	const { data: masters, refetch: refetchMasters } = useQuery({
 		queryKey: ['Masters', activeSalonId],
