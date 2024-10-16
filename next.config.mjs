@@ -21,7 +21,8 @@ const nextConfig = {
       },
 
       {
-        hostname: 'https://api.mybeautybooking.ru'
+        protocol: 'https',
+        hostname: 'api.mybeautybooking.ru'
       }
     ]
   }
