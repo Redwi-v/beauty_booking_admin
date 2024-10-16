@@ -18,6 +18,7 @@ import { useAppointmentStore } from './(form)/appointment/model/appointment.stor
 import { TimeListPicker } from '@/components/ui/time.picker.list/ui/time.picker';
 import { MastersListApi } from '@/api/masters.list';
 import { EntryConfirmView } from './(form)/entry.confirm.view';
+import { SalonBranch } from '../../../api/booking/types';
 interface ICalendarProps {
 	master: IMaster;
 	refetch: () => void;
@@ -35,6 +36,7 @@ const Calendar: FC<ICalendarProps> = props => {
 	});
 
 	const [events, setEvents] = useState<EventInput[]>([]);
+	const [activeUpdateBookingId, setActiveUpdateBookingId] = useState<number | null>(null);
 
 	const [step, setStep] = useState(1);
 
@@ -95,6 +97,9 @@ const Calendar: FC<ICalendarProps> = props => {
 	} = useAppointmentStore(store => store);
 
 	const handleDateClick = (arg: DateClickArg) => {
+		if (moment().isAfter(arg.dateStr) && moment().format('YYYY-MM-DD') !== arg.dateStr) return;
+
+		setActiveUpdateBookingId(null);
 		clear();
 		setStep(1);
 		setTime('');
@@ -113,6 +118,8 @@ const Calendar: FC<ICalendarProps> = props => {
 				servicesIdList: services.map(item => String(item)),
 			}),
 	});
+
+	console.log(infoPopUpIsOpen);
 
 	return (
 		<>
@@ -136,31 +143,8 @@ const Calendar: FC<ICalendarProps> = props => {
 				locale={'ru'}
 				eventClassNames={s.event_wrapper}
 				stickyHeaderDates
-				events={[
-					{
-						start: '2024-10-11T10:00:00',
-						display: 'background',
-						color: '#ff9f89',
-						title: 'hello',
-					},
-					{
-						start: '2024-10-13T10:00:00',
-						display: 'background',
-						color: '#ff9f89',
-					},
-					{
-						start: '2024-10-24',
-						end: '2024-10-28',
-						overlap: false,
-						display: 'background',
-					},
-					{
-						start: '2024-10-06',
-						end: '2024-10-08',
-						overlap: false,
-						display: 'background',
-					},
-				]}
+				events={events}
+				eventContent={renderEventContent}
 			/>
 
 			<Popup
@@ -172,12 +156,34 @@ const Calendar: FC<ICalendarProps> = props => {
 				}}
 			>
 				<div className='modal'>
-					<H2 className='modal_header '>
+					<H2 className='modal_header'>
 						Запись на {moment(infoPopUpIsOpen?.time).locale('ru').format('DD MMMM YYYY HH:mm')}
 					</H2>
 				</div>
 
 				<P>Имя клинета: {infoPopUpIsOpen?.clientName}</P>
+				<div>
+					{infoPopUpIsOpen?.clientComment && (
+						<>
+							<P>Комментарий клиента:</P>
+							<P>{infoPopUpIsOpen?.clientComment}</P>
+						</>
+					)}
+
+					{infoPopUpIsOpen?.adminComment && (
+						<>
+							<P>Комментарий админа:</P>
+							<P>{infoPopUpIsOpen?.adminComment}</P>
+						</>
+					)}
+
+					{infoPopUpIsOpen?.masterComment && (
+						<>
+							<P>Комментарий мастера:</P>
+							<P>{infoPopUpIsOpen?.masterComment}</P>
+						</>
+					)}
+				</div>
 				<P>
 					Время: {moment(infoPopUpIsOpen?.time).format('HH:mm')} -
 					{moment(infoPopUpIsOpen?.time).add({ minutes: allMinutes }).format('HH:mm')}
@@ -197,12 +203,24 @@ const Calendar: FC<ICalendarProps> = props => {
 				</ul>
 
 				<div className={s.info_popup_controls}>
-					<Button
+					{/* <Button
 						type={buttonTypes.blue}
-						buttonParams={{ onClick: () => setAddEventPopupIsOpen(true) }}
+						buttonParams={{
+							onClick: () => {
+								if (!infoPopUpIsOpen) return;
+
+								setActiveUpdateBookingId(infoPopUpIsOpen?.id);
+								setDateAndTime(
+									moment(infoPopUpIsOpen.time).format('MM.DD.YYY'),
+									moment(infoPopUpIsOpen.time).format('HH:mm'),
+								);
+								setServices(infoPopUpIsOpen.services.map(item => item.id));
+								setMasterId(infoPopUpIsOpen.masterAccountId), setAddEventPopupIsOpen(true);
+							},
+						}}
 					>
 						Изменить
-					</Button>
+					</Button> */}
 					<Button
 						type={buttonTypes.red}
 						buttonParams={{
@@ -258,6 +276,11 @@ const Calendar: FC<ICalendarProps> = props => {
 				{step === 2 && (
 					<div className='modal'>
 						<EntryConfirmView
+							activeBookingId={activeUpdateBookingId}
+							closeForm={() => {
+								setAddEventPopupIsOpen(false);
+								refetch();
+							}}
 							branchId={master.salonBranchId}
 							salonId={master.salonBranchId}
 						/>

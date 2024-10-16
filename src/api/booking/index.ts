@@ -10,6 +10,10 @@ export const bookingApi = {
 		return apiInstance.post('/booking', data);
 	},
 
+	update(id: number, data: Partial<ICreateBookingData>) {
+		return apiInstance.patch(`/booking/${id}`, data);
+	},
+
 	delete(id: number) {
 		return apiInstance.delete(`/booking/${id}`);
 	},

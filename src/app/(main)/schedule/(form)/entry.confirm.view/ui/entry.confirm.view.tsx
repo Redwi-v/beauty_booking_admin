@@ -22,6 +22,8 @@ moment.locale('ru');
 interface IEntryConfirmViewProps {
 	salonId: number;
 	branchId: number;
+	closeForm: () => void;
+	activeBookingId: number | null;
 }
 
 type Inputs = {
@@ -31,7 +33,7 @@ type Inputs = {
 };
 
 export const EntryConfirmView: FC<IEntryConfirmViewProps> = props => {
-	const { salonId, branchId } = props;
+	const { salonId, branchId, closeForm, activeBookingId } = props;
 
 	const router = useRouter();
 	const { clear, date, masterId, services, time, branch } = useAppointmentStore(state => state);
@@ -69,6 +71,8 @@ export const EntryConfirmView: FC<IEntryConfirmViewProps> = props => {
 				: new Date(),
 		};
 
+		if (activeBookingId) return updateBookingMutation.mutate(form);
+
 		createBookingMutation.mutate(form);
 	};
 
@@ -76,7 +80,15 @@ export const EntryConfirmView: FC<IEntryConfirmViewProps> = props => {
 		mutationFn: (data: ICreateBookingData) => bookingApi.create(data),
 		onSuccess: () => {
 			clear();
-			router.push('/');
+			closeForm();
+		},
+	});
+
+	const updateBookingMutation = useMutation({
+		mutationFn: (data: Partial<ICreateBookingData>) => bookingApi.update(activeBookingId!, data),
+		onSuccess: () => {
+			clear();
+			closeForm();
 		},
 	});
 

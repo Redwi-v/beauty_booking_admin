@@ -13,7 +13,7 @@ interface IAppointmentStore {
 	setMasterId: (id: number) => void;
 	toggleServices: (id: number) => void;
 	clear: () => void;
-	setServices: (value: []) => void;
+	setServices: (value: number[]) => void;
 
 	branch: SalonBranch | null;
 	setSalonBranch: (value: SalonBranch) => void;
