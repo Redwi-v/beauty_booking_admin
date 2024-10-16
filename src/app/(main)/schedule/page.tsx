@@ -8,9 +8,7 @@ import Image from 'next/image';
 import { getImagePath } from '@/scripts/helpers/getImagePath';
 import { MastersListApi } from '@/api/masters.list';
 
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
-import Calendar from './Calendar';
+import Calendar from './(form)/Calendar';
 
 interface IPageProps {}
 
