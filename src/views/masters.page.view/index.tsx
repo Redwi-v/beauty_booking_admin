@@ -88,18 +88,12 @@ const MastersPageView: FC<MastersPageViewProps> = ({ salonId }) => {
 	const { data, refetch } = useQuery({
 		queryKey: ['mastersList', limit],
 		queryFn: () => MastersListApi.getList(salonId, search),
-		keepPreviousData: true,
 	});
 
 	const { data: salonBranchesData } = useQuery({
 		queryFn: () => SalonsApi.getSalonBranches(salonId),
 		queryKey: ['salonBranches', salonId],
-		onSuccess: data => {
-			// setActiveBranchValue({
-			// 	label: data.list[0].address.city + ', ' + data.list[0].address.address,
-			// 	value: data.list[0].id,
-			// });
-		},
+
 	});
 
 	const activeWeeks: number[] =

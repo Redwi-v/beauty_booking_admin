@@ -50,13 +50,11 @@ const ServicesPageView: FC<ServicesPageViewProps> = ({ id: salonId }) => {
 	const { data, refetch } = useQuery({
 		queryKey: ['servicesList', limit],
 		queryFn: () => servicesListApi.getList({ search: search || undefined }),
-		keepPreviousData: true,
 	});
 
 	const { data: tagsListData, refetch: refetchTags } = useQuery({
 		queryKey: ['tagsList'],
 		queryFn: () => servicesListApi.getAllTags(),
-		keepPreviousData: true,
 	});
 
 	const createTagMutation = useMutation({

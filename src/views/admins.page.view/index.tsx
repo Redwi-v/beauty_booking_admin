@@ -44,7 +44,6 @@ const AdminsPageView: FC<AdminsPageViewProps> = () => {
 	const { data, refetch } = useQuery({
 		queryKey: ['adminsList', limit],
 		queryFn: () => UsersApi.getUsersList(),
-		keepPreviousData: true,
 	});
 
 	const addAdminMutation = useMutation({
