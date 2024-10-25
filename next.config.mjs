@@ -2,12 +2,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    TELEGRAM_APP_URL: "https://client.mybeautybooking.ru",
+    TELEGRAM_APP_URL: "https://t.me/beauty_booking123123_bot/beautyBooking",
+    WEB_APP_URL: "https://client.mybeautybooking.ru",
     API_URL: "https://api.mybeautybooking.ru",
 
     //  DEV
 
-    // TELEGRAM_APP_URL: "http://localhost:3002",
+    // TELEGRAM_APP_URL: "https://t.me/beauty_client_bot/beauty_client",
+    // WEB_APP_URL: "http://localhost:3002",
     // API_URL: "http://localhost:8888",
   },
   images: { 

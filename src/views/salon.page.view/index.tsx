@@ -126,10 +126,16 @@ const SalonPageView: FC<SalonPageViewProps> = ({ id }) => {
 				<H2>Описание:</H2>
 				<P small>{data?.description}</P>
 				<div className={s.app_link}>
-					<H2>Ссылка:</H2>
+					<H2>Ссылка Telegarm app:</H2>
 					<Link
-						href={`${process.env.TELEGRAM_APP_URL}/${id}`}
-					>{`${process.env.TELEGRAM_APP_URL}/${id}`}</Link>
+						href={`${process.env.TELEGRAM_APP_URL}?startapp=${id}`}
+					>{`${process.env.TELEGRAM_APP_URL}?startapp=${id}`}</Link>
+				</div>
+				<div className={s.app_link}>
+					<H2>Ссылка Web app:</H2>
+					<Link
+						href={`${process.env.WEB_APP_URL}/${id}`}
+					>{`${process.env.WEB_APP_URL}/${id}`}</Link>
 				</div>
 				<div className={s.controls}>
 					<Button
