@@ -1,92 +1,166 @@
 @import '@/styles/breakpoints.scss';
 @import '@/styles/apx.scss';
 
+.zero_salons {
+	display: flex;
+	flex-direction: column;
+
+	align-items: center;
+	gap: 20px;
+
+	justify-content: center;
+	align-items: center;
+	font-size: 38px;
+	color: var( --color-grey);
+
+	padding-top: 10vh !important;
+
+
+	a {
+		text-decoration: none;
+		color: var(--color-blue);
+		border-radius: 50px;
+		border: 1px solid var(--color-blue);
+		padding: 10px 20px;
+		transition: all .3s;
+
+		&:hover {
+			transform: scale(1.05);
+		} 
+	}
+
+}
+
+.master_select {
+	z-index: 1000;
+	margin-bottom: 30px;
+}
+
 .list {
+	display: flex;
+	overflow-x: auto;
+	padding: 25px;
+	gap: 30px;
 
-  display: flex;
-  overflow-x: auto;
-  padding: 25px;
-  gap: 30px;
+	.branches {
+		margin-left: 15px;
+		max-height: 150px;
+		overflow: auto;
 
-  .list_item {
-  
-    box-shadow: 0px 0px 20px #00000026;
-    padding: 10px;
-    border-radius: 10px;
-    cursor: pointer;
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
 
-    display: flex;
+		.branch_button.active {
+			background: var(--color-green);
+		}
+		.branch_button {
+			animation: branchesAnimations 1s both;
+			white-space: nowrap;
+			border: none;
+			border-radius: 5px;
+			width: 100%;
+			text-align: left;
+			padding: 5px;
+      overflow: hidden;
 
-    img {
-      border-radius: 10px;
-      object-fit: cover;
-    }
+			background: var(--color-stone-200);
 
-  }
+			&:hover {
+			}
+		}
+	}
 
-  .list_item.active {
-    transform: scale(1.09);
-  }
+	.list_item {
+		box-shadow: 0px 0px 20px #00000026;
+		padding: 10px;
+		border-radius: 10px;
+		cursor: pointer;
 
-  .info {
-    margin-left: 10px;
-  }
+		transition: all 0.3s;
+	transition: height 1s;
 
+
+		display: flex;
+
+		img {
+			border-radius: 10px;
+			object-fit: cover;
+		}
+	}
+
+	.list_item.active {
+		transform: scale(1.09);
+	}
+
+	.info {
+		margin-left: 10px;
+	}
+}
+
+@keyframes branchesAnimations {
+	0% {
+		width: 0;
+		white-space: nowrap;
+		overflow-x: hidden;
+	}
+
+	100% {
+		width: 100%;
+	}
 }
 
 .calendar {
-
 }
 
 .event_wrapper {
-  background: none !important;
-
+	background: none !important;
 }
 
 .schedule_event {
+	border: none;
+	::before {
+		background: transparent !important;
+	}
 
-  border: none;
-  ::before{
-    background: transparent !important;
-  }
+	display: flex;
+	flex-direction: column;
+	gap: $apx-4;
 
-  display: flex;
-  flex-direction: column; 
-  gap: $apx-4;
+	background: var(--color-green);
+	width: 100%;
+	border-radius: $apx-10;
+	padding: $apx-8;
+	color: #242424;
+	font-size: $apx-16;
+	font-weight: 500;
 
-  background: var(--color-green);
-  width: 100%;
-  border-radius: $apx-10;
-  padding: $apx-8;
-  color: #242424;
-  font-size: $apx-16;
-  font-weight: 500;
-
+	div {
+		white-space: normal;
+		text-align: left;
+	}
 }
 
 .popup_info_services {
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: $apx-5;
+	gap: $apx-10;
 
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: $apx-5;
-  gap: $apx-10;
+	li {
+		padding: $apx-10;
+		width: fit-content;
+		border-radius: $apx-5;
 
-  li {
-    padding: $apx-10;
-    width: fit-content;
-    border-radius: $apx-5;
-  
-    display: flex;
-    flex-direction: column;
-    gap: $apx-2;
-    background: var(--color-green);
-
-  }
-  
+		display: flex;
+		flex-direction: column;
+		gap: $apx-2;
+		background: var(--color-green);
+	}
 }
 
 .info_popup_controls {
-  display: flex;
-  margin-top: $apx-20;
-  gap: $apx-20;
+	display: flex;
+	margin-top: $apx-20;
+	gap: $apx-20;
 }

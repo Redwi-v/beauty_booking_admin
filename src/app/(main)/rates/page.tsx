@@ -2,18 +2,30 @@
 import { Button, buttonTypes } from '@/components/inputs/button';
 import s from './rates.module.scss'
 import { H1, H2, P } from '../../../components/containers/text/index';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { payApi } from '@/api/pay';
 import { useRouter } from 'next/navigation';
+import { subscriptionsApi } from '@/api/subscriptions';
+import { AdminApi } from '@/api';
+import cssIf from '@/scripts/helpers/class.add.if';
 
 export default function Page() {
 	const router = useRouter();
 
-	const payMutation = useMutation({
-		mutationFn: () => payApi.pay(),
+	const { data: subscribesTypes } = useQuery({
+		queryKey: ['SUBSCRIBES_TYPES'],
+		queryFn: () => subscriptionsApi.getSubscriptionsList(),
+	});
+
+	const { isLoading, isError, data } = useQuery({
+		queryFn: () => AdminApi.getProfile(),
+		queryKey: ['PROFILE'],
+	});
+
+	const buySubscribeMutation = useMutation({
+		mutationFn: (id: number) => subscriptionsApi.buySubscriptions(id),
 		onSuccess: data => {
-			//@ts-ignore
-			router.replace(data.data);
+			router.replace(data.data.confirmation.confirmation_url);
 		},
 	});
 
@@ -22,36 +34,32 @@ export default function Page() {
 			<div className={s.content}>
 				<H1 className={s.title}>Тарифы</H1>
 				<ul className={s.list}>
-					<li className={s.item}>
-						<span>Начальный</span>
-						<span>+30 дней</span>
-						<Button
-							buttonParams={{ onClick: () => payMutation.mutate() }}
-							type={buttonTypes.blue}
-						>
-							Купить 300 руб
-						</Button>
-					</li>
-					<li className={s.item}>
-						<span>Стандартный</span>
-						<span>+180 дней</span>
-						<Button
-							buttonParams={{ onClick: () => payMutation.mutate() }}
-							type={buttonTypes.blue}
-						>
-							Купить 600 руб
-						</Button>
-					</li>
-					<li className={s.item}>
-						<span>Профи</span>
-						<span>+365 дней</span>
-						<Button
-							buttonParams={{ onClick: () => payMutation.mutate() }}
-							type={buttonTypes.blue}
-						>
-							Купить 1000 руб
-						</Button>
-					</li>
+					{subscribesTypes &&
+						subscribesTypes.data.map(item => (
+							<li
+								key={item.id}
+								className={`${s.subscribe} ${cssIf(
+									data?.data.subscriptionTypeId === item.id,
+									s.active,
+								)}`}
+							>
+								<H1 className={` ${s.title}`}>{item.title}</H1>
+								<P className={` ${s.sub_title}`}>{item.subTitle}</P>
+
+								<Button
+									type={buttonTypes.blue}
+									buttonParams={{
+										onClick: () => {
+											if (item.id === data?.data.subscriptionTypeId) return;
+											buySubscribeMutation.mutate(item.id);
+										},
+									}}
+								>
+									<P className={` ${s.price}`}>{item.price} руб</P>
+									{item.id === data?.data.subscriptionTypeId ? 'Активна' : 'Подписаться'}
+								</Button>
+							</li>
+						))}
 				</ul>
 			</div>
 		</main>

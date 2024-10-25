@@ -2,17 +2,28 @@
 import { Button, buttonTypes } from '@/components/inputs/button';
 import s from './rates.module.scss';
 import { H1, H2, P } from '../../../components/containers/text/index';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { authApi } from '@/api/auth';
 import { AdminApi } from '@/api';
 import Image from 'next/image';
 import Avatar from '@/../public/images/no_avatar.jpg';
+import moment from 'moment';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
 	const { isLoading, isError, data } = useQuery({
 		queryFn: () => AdminApi.getProfile(),
 		queryKey: ['PROFILE'],
 	});
+
+	const router = useRouter();
+
+	useEffect(() => {
+		if (!isLoading && !data?.data.owner) router.push('/login');
+	}, [isLoading, data]);
+
+	if (isLoading) return;
 
 	return (
 		<main className={`${s.main}`}>
@@ -30,9 +41,12 @@ export default function Page() {
 						<H2 className={s.name}>
 							{data?.data.name} {data?.data.lastName}
 						</H2>
-						<P className={s.subscription}>Роль: {data?.data.owner.role}</P>
+						<P className={s.subscription}>Роль: {data?.data?.owner?.role}</P>
 						<P className={s.subscription}>
-							Подписка действует еще: <span>165 дней</span>
+							{data?.data.subscription.title}: Действут до{' '}
+							<span>
+								{moment(data?.data.subscriptionEndDate).locale('ru').format('DD MMMM YYYY HH:mm')}
+							</span>
 						</P>
 					</div>
 				</div>

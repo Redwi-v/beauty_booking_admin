@@ -1,3 +1,4 @@
+import { IMaster } from '../masters.list/types';
 import { IGetListMeta } from '../types';
 
 export interface ICreateSalonBody {
@@ -18,6 +19,8 @@ export interface ISalon {
 	description: string;
 	createdAt: Date;
 	updatedAt: Date;
+	branches: ISalonBranch[];
+	MasterAccount: IMaster[];
 	_count: {
 		branches: number;
 		MasterAccount: number;
@@ -28,7 +31,6 @@ export interface IGetOneSalon {}
 
 export type IGetSalonsListRes = {
 	list: Array<ISalon>;
-
 	meta: IGetListMeta;
 };
 

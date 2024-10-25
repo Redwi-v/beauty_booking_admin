@@ -8,10 +8,11 @@ import {
 } from './types';
 
 export const MastersListApi = {
-	async getList(salonId: number | string, search?: string) {
+	async getList(salonId: number | string, branchId: number | string, search?: string) {
 		const res = await apiInstance.get<IGetMastersListRes>(`/master`, {
 			params: {
 				salonId,
+				branchId,
 				search,
 			},
 		});

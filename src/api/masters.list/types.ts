@@ -80,6 +80,7 @@ export interface IBooking {
 		tagName: string;
 		salonId: number;
 	}>;
+	master: IMaster;
 }
 
 export interface ICreateMasterBody {
@@ -110,6 +111,7 @@ export interface IUpdateMasterBody {
 
 export interface IGetFreeTimeParams {
 	date?: Date;
+	bookingId?: number | null;
 	masterId?: number | string;
 	servicesIdList?: string[];
 }

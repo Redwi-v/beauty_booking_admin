@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from 'react';
 import s from './choice.service.view.module.scss';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
 import { Rethink_Sans } from 'next/font/google';
 import { useAppointmentStore } from '../../appointment/model/appointment.store';
@@ -39,7 +39,9 @@ export const ChoiceServiceView: FC<ChoiceServiceViewProps> = () => {
 };
 
 const ListWithTabs = () => {
-	const { toggleServices, services, masterId, time, date } = useAppointmentStore(state => state);
+	const { toggleServices, services, masterId, time, date, setServices } = useAppointmentStore(
+		state => state,
+	);
 
 	const [search, setSearch] = useState('');
 

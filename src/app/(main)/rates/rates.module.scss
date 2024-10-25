@@ -13,70 +13,81 @@
 	}
 
 	.list {
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
+		display: flex;
 		gap: $apx-40;
-    margin-top: $apx-50;
+		margin-top: $apx-50;
+		justify-content: center;
+		flex-wrap: wrap;
+
+		li {
+			min-width: 30%;
+		}
 	}
 
-	.item {
-		display: flex;
-		flex-direction: column;
-		gap: $apx-20;
-		text-align: center;
-		background: var(--color-grey);
+	.subscribe.active {
+		background: var(--color-green);
+	}
+
+	.subscribe {
+		text-align: center ;
+
+		background: var(--color-stone-100);
 		padding: $apx-30;
-		border-radius: $apx-10;
-    span {
-      color: #fff;
-    }
-    span:first-child {
-      font-size: $apx-30;
-      font-weight: 700;
-      color: var(--color-blue);
-    }
-    
+		border-radius: 20px;
+
+		.title {
+			
+			text-align: center;
+			margin-bottom: $apx-10;
+		}
+
+		.sub_title {
+			margin-bottom: $apx-15;
+		}
+
+		.price {
+			color: var(--color-white);
+			font-size: $apx-24;
+		}
 	}
 }
 
-@media (max-width:$mobile-breakpoint) {
-	
-.content {
-	padding-left: $apx-m-15;
-	padding-right: $apx-m-15;
+@media (max-width: $mobile-breakpoint) {
+	.content {
+		padding-left: $apx-m-15;
+		padding-right: $apx-m-15;
 
-	.title {
-		padding-top: $apx-m-10;
-		font-size: $apx-m-30 !important;
-		text-transform: uppercase;
-	}
+		.title {
+			padding-top: $apx-m-10;
+			font-size: $apx-m-30 !important;
+			text-transform: uppercase;
+		}
 
-	.list {
-		display: grid;
-		grid-template-columns: 1fr ;
-		gap: $apx-m-10;
-    margin-top: $apx-m-20;
-		padding-bottom: $apx-m-100;
-	}
+		.list {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: $apx-m-10;
+			margin-top: $apx-m-20;
+			padding-bottom: $apx-m-100;
+		}
 
-	.item {
-		display: flex;
-		flex-direction: column;
-		gap: $apx-m-10;
-		text-align: center;
-		background: var(--color-grey);
-		padding: $apx-m-30;
-		border-radius: $apx-m-10;
-    span {
-      color: #fff;
-			font-size: $apx-m-25;
-    }
-    span:first-child {
-      font-size: $apx-m-30;
-      font-weight: 700;
-      color: var(--color-blue);
-    }
-    
+		.item {
+			display: flex;
+			flex-direction: column;
+			gap: $apx-m-10;
+			text-align: center;
+			background: var(--color-grey);
+			padding: $apx-m-30;
+			border-radius: $apx-m-10;
+			span {
+				color: #fff;
+				font-size: $apx-m-25;
+			}
+			span:first-child {
+				font-size: $apx-m-30;
+				font-weight: 700;
+				color: var(--color-blue);
+			}
+		}
 	}
-}
 }

@@ -1,5 +1,5 @@
 'use client';
-import { DetailedHTMLProps, FC, InputHTMLAttributes, useState } from 'react';
+import { act, DetailedHTMLProps, FC, InputHTMLAttributes, useEffect, useState } from 'react';
 import s from './entry.confirm.view.module.scss';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -7,7 +7,7 @@ import Link from 'next/link';
 import buttonStyles from '@/widgets/controls/ui/controls.module.scss';
 import moment from 'moment';
 import 'moment/locale/ru';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { SubmitHandler, useForm, UseFormRegisterReturn } from 'react-hook-form';
 import ReactInputMask from 'react-input-mask';
 import { useAppointmentStore } from '../../appointment/model/appointment.store';
@@ -24,6 +24,7 @@ interface IEntryConfirmViewProps {
 	branchId: number;
 	closeForm: () => void;
 	activeBookingId: number | null;
+	refetch: () => void;
 }
 
 type Inputs = {
@@ -33,7 +34,7 @@ type Inputs = {
 };
 
 export const EntryConfirmView: FC<IEntryConfirmViewProps> = props => {
-	const { salonId, branchId, closeForm, activeBookingId } = props;
+	const { salonId, branchId, closeForm, activeBookingId, refetch } = props;
 
 	const router = useRouter();
 	const { clear, date, masterId, services, time, branch } = useAppointmentStore(state => state);
@@ -53,10 +54,29 @@ export const EntryConfirmView: FC<IEntryConfirmViewProps> = props => {
 		register,
 		handleSubmit,
 		watch,
+		setValue,
 		formState: { errors },
 	} = useForm<Inputs>({
 		mode: 'onChange',
 	});
+
+	const activeBooking =
+		activeBookingId && activeMaster?.Booking.find(booking => booking.id === activeBookingId);
+
+	useEffect(() => {
+		if (!activeBooking) return;
+
+		setValue(
+			'clientComment',
+			activeBooking.adminComment || activeBooking.clientComment || activeBooking.masterComment,
+		);
+
+		setValue('clientName', activeBooking.clientName);
+		setValue('clientPhone', activeBooking.clientPhone);
+	}, [activeBooking]);
+	//не трогать
+	console.log(watch('clientPhone'));
+
 	const onSubmit: SubmitHandler<Inputs> = data => {
 		const form: ICreateBookingData = {
 			adminComment: data.clientComment,
@@ -81,6 +101,8 @@ export const EntryConfirmView: FC<IEntryConfirmViewProps> = props => {
 		onSuccess: () => {
 			clear();
 			closeForm();
+
+			refetch();
 		},
 	});
 
@@ -89,6 +111,7 @@ export const EntryConfirmView: FC<IEntryConfirmViewProps> = props => {
 		onSuccess: () => {
 			clear();
 			closeForm();
+			refetch();
 		},
 	});
 
@@ -196,7 +219,7 @@ export const EntryConfirmView: FC<IEntryConfirmViewProps> = props => {
 						buttonParams={{ onClick: handleSubmit(onSubmit) }}
 						type={buttonTypes.blue}
 					>
-						Создать
+						{activeBookingId ? 'Обновить' : 'Создать'}
 					</Button>
 				</div>
 			</div>

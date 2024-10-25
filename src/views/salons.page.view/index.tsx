@@ -2,7 +2,7 @@
 import { FC, useState } from 'react';
 import s from './salons.page.view.module.scss';
 import List from '@/components/ui/list';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import Avatar from '@/../public/images/no_avatar.jpg';
 import { H1, H2, P } from '../../components/containers/text/index';
 import Popup from 'reactjs-popup';
@@ -64,7 +64,6 @@ const SalonsPageView: FC<SalonsPageViewProps> = () => {
 	const { data, refetch } = useQuery({
 		queryKey: ['salonsList', limit],
 		queryFn: () => SalonsApi.getList(getSearchValues('searchValue')),
-		keepPreviousData: true,
 	});
 
 	const addSalonMutation = useMutation({

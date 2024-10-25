@@ -44,6 +44,11 @@ export interface IProfileRes {
 	name: string;
 	lastName: string;
 	owner: Owner;
+	subscription: ISubscription;
+
+	subscriptionTypeId: number;
+	subscriptionStartDate: Date;
+	subscriptionEndDate: Date;
 }
 
 interface Owner {
@@ -53,5 +58,14 @@ interface Owner {
 	email: string;
 	role: string;
 }
+export type ISubscription = {
+	id: number;
+	durationMouths: number;
+	durationDays: number;
+	price: number;
+	title: string;
+	subTitle: string;
+	isStartingSubscription: boolean;
+};
 
 

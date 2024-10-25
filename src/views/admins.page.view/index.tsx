@@ -2,7 +2,7 @@
 import { FC, useState } from 'react';
 import s from './admins.page.view.module.scss';
 import List from '@/components/ui/list';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { AdminsListApi } from '@/api/admins.list';
 import Avatar from '@/../public/images/no_avatar.jpg';
 import { H1, H2, P } from '../../components/containers/text/index';

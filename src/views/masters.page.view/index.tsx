@@ -2,7 +2,7 @@
 import { FC, useEffect, useState } from 'react';
 import s from './masters.page.view.module.scss';
 import List from '@/components/ui/list';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import Avatar from '@/../public/images/no_avatar.jpg';
 import { H1, H2 } from '../../components/containers/text/index';
 import Popup from 'reactjs-popup';

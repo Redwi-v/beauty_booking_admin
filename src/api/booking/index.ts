@@ -1,8 +1,9 @@
 import apiInstance from '../instance';
+import { IBooking } from '../masters.list/types';
 import { ICreateBookingData, IGetBookingListRes } from './types';
 
 export const bookingApi = {
-	getListById(telegramId: string | number) {
+	getListById(telegramId?: string | number) {
 		return apiInstance.get<IGetBookingListRes[]>('/booking', { params: { telegramId } });
 	},
 
@@ -16,5 +17,14 @@ export const bookingApi = {
 
 	delete(id: number) {
 		return apiInstance.delete(`/booking/${id}`);
+	},
+
+	getAllBooking(branchId: number, salonId: number) {
+		return apiInstance.get<IBooking[]>(`/salons/booking/all`, {
+			params: {
+				branchId,
+				salonId,
+			},
+		});
 	},
 };

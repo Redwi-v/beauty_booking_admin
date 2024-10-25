@@ -1,7 +1,7 @@
 'use client';
 import { FC, useEffect, useRef, useState } from 'react';
 import s from './salon.page.view.module.scss';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { SalonsApi } from '@/api/salons.list';
 import Avatar from '@/../public/images/no_avatar.jpg';
 import Image from 'next/image';
@@ -51,7 +51,7 @@ const SalonPageView: FC<SalonPageViewProps> = ({ id }) => {
 		setValue('name', data.name);
 	}, [data]);
 
-	const closeModal = () => { 
+	const closeModal = () => {
 		setOpen(false);
 	};
 
@@ -128,8 +128,8 @@ const SalonPageView: FC<SalonPageViewProps> = ({ id }) => {
 				<div className={s.app_link}>
 					<H2>Ссылка:</H2>
 					<Link
-						href={`${process.env.TELEGRAM_APP_URL}?startapp=${id}`}
-					>{`${process.env.TELEGRAM_APP_URL}?startapp=${id}`}</Link>
+						href={`${process.env.TELEGRAM_APP_URL}/${id}`}
+					>{`${process.env.TELEGRAM_APP_URL}/${id}`}</Link>
 				</div>
 				<div className={s.controls}>
 					<Button

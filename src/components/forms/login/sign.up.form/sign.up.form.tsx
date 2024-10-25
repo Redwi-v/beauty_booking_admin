@@ -5,7 +5,7 @@ import { Button, buttonTypes } from '../../../inputs/button/index';
 import s from '../login.forms.module.scss'
 import Input from "@/components/inputs/input"
 import { authApi } from '@/api/auth';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { ISignUpParams } from '@/api/auth/types';
 import { Store } from 'react-notifications-component';
 import { notificationSettings } from '@/constants/notification.settings';

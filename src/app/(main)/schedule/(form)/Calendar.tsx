@@ -6,26 +6,27 @@ import s from '../schedule.module.scss';
 import { EventContentArg, EventInput, EventSourceInput } from '@fullcalendar/core/index.js';
 import moment from 'moment';
 import { IBooking, IMaster } from '@/api/masters.list/types';
-import { Tooltip } from 'react-tooltip';
 import Popup from 'reactjs-popup';
 import { H2, P } from '@/components/containers/text';
-import { time } from 'console';
 import { Button, buttonTypes } from '@/components/inputs/button';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { bookingApi } from '@/api/booking';
 import { ChoiceServiceView } from './choice.service';
 import { useAppointmentStore } from './appointment/model/appointment.store';
 import { TimeListPicker } from '@/components/ui/time.picker.list/ui/time.picker';
 import { MastersListApi } from '@/api/masters.list';
 import { EntryConfirmView } from './entry.confirm.view';
-import { SalonBranch } from '../../../../api/booking/types';
+import Select from 'react-select';
 interface ICalendarProps {
-	master: IMaster;
+	master?: IMaster;
 	refetch: () => void;
+	branchId: number | null;
+	salonId: number | null;
+	masters: IMaster[];
 }
 
 const Calendar: FC<ICalendarProps> = props => {
-	const { master, refetch } = props;
+	const { master, refetch, branchId, salonId, masters } = props;
 
 	const deleteBookingMutation = useMutation({
 		mutationFn: (id: number) => bookingApi.delete(id),
@@ -35,12 +36,36 @@ const Calendar: FC<ICalendarProps> = props => {
 		},
 	});
 
+	const {
+		data: allBooking,
+		refetch: refetchAllBooking,
+		isSuccess: allBookingSuccess,
+	} = useQuery({
+		queryKey: ['BookingAll', branchId, salonId],
+		queryFn: () => bookingApi.getAllBooking(branchId!, salonId!),
+		enabled: !!branchId && !!salonId,
+	});
+
+	useEffect(() => {
+		if (allBookingSuccess) {
+			setEvents(
+				allBooking.data.map(booking => {
+					return { date: booking.time, id: String(booking.id) };
+				}),
+			);
+		}
+	}, [allBookingSuccess, allBooking]);
+
 	const [events, setEvents] = useState<EventInput[]>([]);
 	const [activeUpdateBookingId, setActiveUpdateBookingId] = useState<number | null>(null);
 
 	const [step, setStep] = useState(1);
 
 	useEffect(() => {
+		if (!master) {
+			return;
+		}
+
 		setEvents(
 			master.Booking.map(booking => {
 				return { date: booking.time, id: String(booking.id) };
@@ -55,9 +80,11 @@ const Calendar: FC<ICalendarProps> = props => {
 	};
 
 	function renderEventContent(eventInfo: EventContentArg) {
-		const activeEvent = master.Booking.find(booking => +eventInfo.event.id === booking.id);
+		const activeEvent = master
+			? master.Booking.find(booking => +eventInfo.event.id === booking.id)
+			: allBooking?.data.find(booking => +eventInfo.event.id === booking.id);
 
-		if (!activeEvent) return;
+		if (!activeEvent) return 'hello';
 
 		const allMinutes = activeEvent.services.reduce((prev, service) => {
 			return service.time + prev;
@@ -68,6 +95,9 @@ const Calendar: FC<ICalendarProps> = props => {
 				onClick={() => openInfoPopUp(activeEvent)}
 				className={s.schedule_event}
 			>
+				{!master && (
+					<div>Мастер: {activeEvent.master.name + ' ' + activeEvent.master.lastName}</div>
+				)}
 				<div>Клиент: {activeEvent.clientName}</div>
 				<div>
 					Время: {moment(activeEvent.time).format('HH:mm')} -
@@ -94,10 +124,24 @@ const Calendar: FC<ICalendarProps> = props => {
 		setSalonBranch,
 		setServices,
 		clear,
+		masterId,
 	} = useAppointmentStore(store => store);
 
+	useEffect(() => {
+		if (activeUpdateBookingId) return;
+
+		setServices([]);
+		setDateAndTime(date, null);
+		setStep(1);
+	}, [masterId]);
+
 	const handleDateClick = (arg: DateClickArg) => {
-		if (moment().isAfter(arg.dateStr) && moment().format('YYYY-MM-DD') !== arg.dateStr) return;
+		if (
+			(moment().isAfter(arg.dateStr) && moment().format('YYYY-MM-DD') !== arg.dateStr) ||
+			!branchId ||
+			!salonId
+		)
+			return;
 
 		setActiveUpdateBookingId(null);
 		clear();
@@ -110,23 +154,24 @@ const Calendar: FC<ICalendarProps> = props => {
 	const [time, setTime] = useState(stateTime || '');
 
 	const { data: freeTime } = useQuery({
-		queryKey: ['FreeTime', date, master?.id, services],
+		queryKey: ['FreeTime', date, masterId, services],
 		queryFn: () =>
 			MastersListApi.getFreeTime({
 				date: moment(date).toDate(),
-				masterId: master?.id,
+				masterId: masterId!,
+				bookingId: activeUpdateBookingId,
 				servicesIdList: services.map(item => String(item)),
 			}),
+		enabled: !!masterId,
 	});
-
-	console.log(infoPopUpIsOpen);
-
+	
 	return (
 		<>
 			<FullCalendar
 				viewClassNames={s.calendar}
 				plugins={[dayGridPlugin, interactionPlugin]}
 				height={'auto'}
+				dayMaxEvents={3}
 				buttonText={{
 					month: 'Месяц',
 					week: 'Неделя',
@@ -153,6 +198,9 @@ const Calendar: FC<ICalendarProps> = props => {
 				closeOnEscape
 				onClose={() => {
 					setInfoPopUpIsOpen(null);
+				}}
+				overlayStyle={{
+					zIndex: 100000,
 				}}
 			>
 				<div className='modal'>
@@ -203,7 +251,7 @@ const Calendar: FC<ICalendarProps> = props => {
 				</ul>
 
 				<div className={s.info_popup_controls}>
-					{/* <Button
+					<Button
 						type={buttonTypes.blue}
 						buttonParams={{
 							onClick: () => {
@@ -211,16 +259,19 @@ const Calendar: FC<ICalendarProps> = props => {
 
 								setActiveUpdateBookingId(infoPopUpIsOpen?.id);
 								setDateAndTime(
-									moment(infoPopUpIsOpen.time).format('MM.DD.YYY'),
+									moment(infoPopUpIsOpen.time).format('MM.DD.YYYY'),
 									moment(infoPopUpIsOpen.time).format('HH:mm'),
 								);
+								setTime(moment(infoPopUpIsOpen.time).format('HH:mm'));
+
 								setServices(infoPopUpIsOpen.services.map(item => item.id));
-								setMasterId(infoPopUpIsOpen.masterAccountId), setAddEventPopupIsOpen(true);
+								setMasterId(infoPopUpIsOpen.masterAccountId);
+								setAddEventPopupIsOpen(true);
 							},
 						}}
 					>
 						Изменить
-					</Button> */}
+					</Button>
 					<Button
 						type={buttonTypes.red}
 						buttonParams={{
@@ -236,6 +287,9 @@ const Calendar: FC<ICalendarProps> = props => {
 				open={addEventPopupIsOpen}
 				closeOnDocumentClick
 				closeOnEscape
+				overlayStyle={{
+					zIndex: 100001,
+				}}
 				onClose={() => setAddEventPopupIsOpen(false)}
 			>
 				{step === 1 && (
@@ -245,13 +299,45 @@ const Calendar: FC<ICalendarProps> = props => {
 								Запись на {moment(date).locale('ru').format('DD MMMM YYYY ')}
 							</H2>
 						</div>
-						<ChoiceServiceView />
-						<div>
-							<TimeListPicker
-								steps={freeTime?.data?.freeTime || []}
-								time={time || undefined}
-								setTime={setTime}
+
+						<>
+							<Select
+								className={s.master_select}
+								classNamePrefix='select'
+								value={
+									masterId !== null && {
+										value: masterId,
+										label:
+											masters.find(master => masterId === master.id)?.name +
+											' ' +
+											masters.find(master => masterId === master.id)?.lastName,
+									}
+								}
+								onChange={value => {
+									if (typeof value === 'boolean' || !value?.value) return;
+
+									setServices([]);
+									setDateAndTime(date, null);
+									setMasterId(value?.value);
+								}}
+								isSearchable={true}
+								name='color'
+								options={masters.map(master => ({
+									value: master.id,
+									label: master.name + ' ' + master.lastName,
+								}))}
 							/>
+						</>
+
+						{masterId && <ChoiceServiceView />}
+						<div>
+							{services.length > 0 && (
+								<TimeListPicker
+									steps={freeTime?.data?.freeTime || []}
+									time={time || undefined}
+									setTime={setTime}
+								/>
+							)}
 						</div>
 						<Button
 							buttonParams={{
@@ -259,16 +345,17 @@ const Calendar: FC<ICalendarProps> = props => {
 									if (!date || !time) return;
 
 									setDateAndTime(date.toString(), time);
-									setMasterId(master?.id);
+
+									if (master) setMasterId(master?.id);
 
 									//@ts-ignore
-									setSalonBranch(master.salonBranch);
+									setSalonBranch(branchId);
 									setStep(2);
 								},
 							}}
-							type={date && time ? buttonTypes.blue : undefined}
+							type={date && time && services.length > 0 ? buttonTypes.blue : undefined}
 						>
-							Добавить запись
+							{activeUpdateBookingId ? 'Обновить запись' : 'Добавить запись'}
 						</Button>
 					</div>
 				)}
@@ -276,13 +363,19 @@ const Calendar: FC<ICalendarProps> = props => {
 				{step === 2 && (
 					<div className='modal'>
 						<EntryConfirmView
+							refetch={() => {
+								refetch();
+								refetchAllBooking();
+							}}
 							activeBookingId={activeUpdateBookingId}
 							closeForm={() => {
 								setAddEventPopupIsOpen(false);
 								refetch();
+								refetchAllBooking();
+								setStep(1);
 							}}
-							branchId={master.salonBranchId}
-							salonId={master.salonId}
+							branchId={branchId!}
+							salonId={salonId!}
 						/>
 					</div>
 				)}

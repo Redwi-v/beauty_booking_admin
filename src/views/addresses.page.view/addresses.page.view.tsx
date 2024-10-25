@@ -5,7 +5,7 @@ import Input from '@/components/inputs/input';
 import { FC, useState } from 'react';
 import s from './addresses.page.view.module.scss';
 import List from '@/components/ui/list';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { SalonsApi } from '@/api/salons.list';
 import { useParams } from 'next/navigation';
 import { ISalonBranchCreate } from '@/api/salons.list/types';

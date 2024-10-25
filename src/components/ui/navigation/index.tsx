@@ -1,13 +1,14 @@
 'use client'
-import { FC } from 'react';
-import s from './navigation.module.scss'
+import { FC, useEffect } from 'react';
+import s from './navigation.module.scss';
 import Link from 'next/link';
 import { ListIcon, UsersIcon } from '@/components/images';
 import { useBearStore } from '@/views/login.view/login.store';
 import cssIf from '@/scripts/helpers/class.add.if';
 import { AdminApi } from '@/api';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Role } from '@/api/types';
+import { useRouter } from 'next/navigation';
 
 interface NavigationProps {
 	className?: string;
@@ -21,9 +22,17 @@ const Navigation: FC<NavigationProps> = ({ className }) => {
 		queryKey: ['PROFILE'],
 	});
 
+	const router = useRouter();
+
+	useEffect(() => {
+		if (!isLoading && !data?.data.owner) router.push('/login');
+	}, [isLoading, data]);
+
+	if (isLoading) return;
+
 	return (
 		<div className={`${s.navigation} ${cssIf(!!className, className)}`}>
-			{data?.data.owner.role === Role.ADMIN && (
+			{data?.data?.owner?.role === Role.ADMIN && (
 				<Link
 					className={s.link}
 					href={'/admins'}
