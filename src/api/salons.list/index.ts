@@ -1,79 +1,49 @@
 import apiInstance from '../instance';
 import { objectToForm } from '../object.to.form';
-import {
-	ICreateBranchRes,
-	ICreateSalonBody,
-	IGetSalonBranchesRes,
-	IGetSalonsListRes,
-	ISalon,
-	ISalonBranchCreate,
-	IUpdateSalonBody,
-} from './types';
+import { ICreateSalonBody, IGetAllParams, ISalon, IUpdateSalon } from './types';
 
-export const SalonsApi = {
+export const SalonApi = {
 	async createItem(body: ICreateSalonBody) {
 		const dataForm = objectToForm(body);
 
-		const res = await apiInstance.post<ISalon>('/salons', dataForm);
+		const res = await apiInstance.post<ISalon>('/salon', dataForm);
 
 		return res.data;
 	},
 
-	async getList(search?: string) {
-		const res = await apiInstance.get<IGetSalonsListRes>(`/salons`, {
-			params: { search },
+	async updateSalon(body: IUpdateSalon) {
+		const dataForm = objectToForm(body);
+
+		const res = await apiInstance.put<ISalon>('/salon', dataForm);
+
+		return res.data;
+	},
+
+	async deleteSalons(salonId: number[]) {
+		const res = await apiInstance.delete<ISalon>('/salon', {
+			params: {
+				salonsId: salonId,
+			},
 		});
 
 		return res.data;
 	},
 
-	async getOne(id: number) {
-		const res = await apiInstance.get<ISalon>(`/salons/${id}`);
+	async getSalonById(salonId: number) {
+		const res = await apiInstance.get<ISalon>(`/salon/${salonId}`);
 
 		return res.data;
 	},
 
-	async update(id: number, body: IUpdateSalonBody) {
-		const dataForm = objectToForm(body);
-
-		const res = await apiInstance.patch<IGetSalonsListRes>(`/salons/${id}`, dataForm);
-
-		return res.data;
-	},
-
-	async delete(id: number) {
-		const res = await apiInstance.delete<IGetSalonsListRes>(`/salons/${id}`);
+	async getAllSalons(params: IGetAllParams) {
+		const res = await apiInstance.get<{ list: ISalon[]; totalCount: number }>('/salon', {
+			params: {
+				skip: params.pagination?.skip,
+				take: params.pagination?.take,
+				search: params.search,
+			},
+		});
 
 		return res.data;
-	},
-
-	async getSalonBranches(salonId: string, search?: string) {
-		return (
-			await apiInstance.get<IGetSalonBranchesRes>('/salon-branch/findSalonBranches', {
-				params: { salonId },
-			})
-		).data;
-	},
-
-	async createSalonBranches(salonId: string, salonBranchParams: ISalonBranchCreate) {
-		return (
-			await apiInstance.post<ICreateBranchRes>('/salon-branch', {
-				address: salonBranchParams,
-				salon: {
-					salonId: +salonId,
-				},
-			})
-		).data;
-	},
-	async updateSalonBranches(salonId: number, salonBranchParams: ISalonBranchCreate) {
-		return (
-			await apiInstance.put<ICreateBranchRes>(`/salon-branch/${salonId}`, {
-				address: salonBranchParams,
-			})
-		).data;
-	},
-
-	async deleteBranch(branchId: number) {
-		return (await apiInstance.delete(`/salon-branch/${branchId}`)).data;
 	},
 };

@@ -9,6 +9,16 @@ import { AdminApi } from '@/api';
 import { useQuery } from '@tanstack/react-query';
 import { Role } from '@/api/types';
 import { useRouter } from 'next/navigation';
+import {
+	LuCalendar,
+	LuHand,
+	LuHeartHandshake,
+	LuMapPin,
+	LuPi,
+	LuPin,
+	LuUser,
+} from 'react-icons/lu';
+import { Icon } from '@chakra-ui/react';
 
 interface NavigationProps {
 	className?: string;
@@ -24,10 +34,6 @@ const Navigation: FC<NavigationProps> = ({ className }) => {
 
 	const router = useRouter();
 
-	useEffect(() => {
-		if (!isLoading && !data?.data.owner) router.push('/login');
-	}, [isLoading, data]);
-
 	if (isLoading) return;
 
 	return (
@@ -37,7 +43,7 @@ const Navigation: FC<NavigationProps> = ({ className }) => {
 					className={s.link}
 					href={'/admins'}
 				>
-					<UsersIcon />
+					<LuPin />
 					<span>Админы</span>
 				</Link>
 			)}
@@ -46,7 +52,7 @@ const Navigation: FC<NavigationProps> = ({ className }) => {
 				className={s.link}
 				href={'/salons'}
 			>
-				<ListIcon />
+				<LuMapPin />
 				<span>Салоны</span>
 			</Link>
 
@@ -54,7 +60,7 @@ const Navigation: FC<NavigationProps> = ({ className }) => {
 				className={s.link}
 				href={'/profile'}
 			>
-				<ListIcon />
+				<LuUser />
 				<span>Профиль</span>
 			</Link>
 
@@ -62,7 +68,7 @@ const Navigation: FC<NavigationProps> = ({ className }) => {
 				className={s.link}
 				href={'/rates'}
 			>
-				<ListIcon />
+				<LuHeartHandshake />
 				<span>Тарифы</span>
 			</Link>
 
@@ -70,7 +76,7 @@ const Navigation: FC<NavigationProps> = ({ className }) => {
 				className={s.link}
 				href={'/schedule'}
 			>
-				<ListIcon />
+				<LuCalendar />
 				<span>Расписание</span>
 			</Link>
 		</div>

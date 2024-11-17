@@ -8,9 +8,15 @@ interface ImageInputProps {
 	selectedFile: File | null;
 	setSelectedFile: (file: File | null) => void;
 	className?: string;
+	startPreview?: string;
 }
 
-const ImageInput: FC<ImageInputProps> = ({ selectedFile, setSelectedFile, className }) => {
+const ImageInput: FC<ImageInputProps> = ({
+	selectedFile,
+	setSelectedFile,
+	className,
+	startPreview,
+}) => {
 	const [preview, setPreview] = useState<string | null>(null);
 
 	// create a preview as a side effect, whenever selected file is changed
@@ -44,8 +50,9 @@ const ImageInput: FC<ImageInputProps> = ({ selectedFile, setSelectedFile, classN
 				onChange={onSelectFile}
 			/>
 
-			{selectedFile && preview && <img src={preview} />}
-			<PhotoIcon className={cssIf(!!!preview, s.show)} />
+			{selectedFile && preview && <img src={preview || startPreview} />}
+			{!selectedFile && startPreview && <img src={preview || startPreview} />}
+			<PhotoIcon className={cssIf(!!!preview && !startPreview, s.show)} />
 		</label>
 	);
 };

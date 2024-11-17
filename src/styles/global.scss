@@ -5,7 +5,7 @@
 @import 'react-tooltip/dist/react-tooltip.css';
 
 html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+ p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
@@ -17,9 +17,6 @@ article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
@@ -132,9 +129,9 @@ body {
 	
 .container {
 
-	max-width:  $apx-1500;
+	max-width:  1500px;
 	margin: 0 auto;
-	padding: $apx-10 !important;
+	padding: 30px !important;
 
 }
 
@@ -152,7 +149,7 @@ body {
 		max-width: none;
 		max-width:  none;
 		margin: 0 auto;
-		padding: $apx-m-20 !important;
+		padding: 20px !important;
 
 	}
 	
@@ -208,6 +205,21 @@ body {
 	
 	}
 
+}
+
+*::-webkit-scrollbar {
+  width: 3px;
+	height: 3px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: #e4e4e4;
+  border-radius: 100px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #3b82f6;
+  border-radius: 100px;
 }
 
 .myCustomHeight {

@@ -1,46 +1,29 @@
-import apiInstance from "../instance"
-import {
-	ICreateMasterBody,
-	IGetFreeTimeParams,
-	IGetMastersListRes,
-	IMaster,
-	IUpdateMasterBody,
-} from './types';
+import apiInstance from '../instance';
+import { ICreateMasterBody, IGetMastersParams, IMasterAccount, IUpdateMasterBody } from './types';
+import { objectToForm } from '../object.to.form';
 
-export const MastersListApi = {
-	async getList(salonId: number | string, branchId: number | string, search?: string) {
-		const res = await apiInstance.get<IGetMastersListRes>(`/master`, {
-			params: {
-				salonId,
-				branchId,
-				search,
-			},
-		});
-
-		return res.data;
+export const mastersListApi = {
+	async getList(params: IGetMastersParams) {
+		return apiInstance.get<{ list: IMasterAccount[]; count: number }>('/master', { params });
 	},
 
 	async create(body: ICreateMasterBody) {
-		const res = await apiInstance.post<IMaster>(`/master`, body);
-		return res.data;
-	},
+		const form = objectToForm(body);
 
-	async getOne(id: number | string) {
-		const res = await apiInstance.get<IMaster>(`/master/${id}`);
-		return res.data;
+		return apiInstance.post('/master', form);
 	},
 
 	async update(id: number | string, body: IUpdateMasterBody) {
-		const res = await apiInstance.patch<IMaster>(`/master/${id}`, body);
-		return res.data;
+		const form = objectToForm(body);
+
+		return apiInstance.patch(`master/${id}`, form);
 	},
 
-	async delete(id: number) {
-		const res = await apiInstance.delete<IMaster>(`/master/${id}`);
-		return res.data;
+	async getOne(id: number | string) {
+		return apiInstance.get(`master/${id}`);
 	},
 
-	async getFreeTime(params: IGetFreeTimeParams) {
-		return apiInstance.get<{ freeTime: string[] }>('/master/time/freeTime', { params });
+	async delete(idArray: number[]) {
+		return apiInstance.delete('/master', { params: { idArray } });
 	},
 };

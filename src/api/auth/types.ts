@@ -1,26 +1,21 @@
 export interface ISignUpParams {
-
-  email: string
-  password: string
-  name: string
-  lastName: string
-
+	password: string;
+	name: string;
+	lastName: string;
+	phoneNumber: string;
+	messageKey: string;
 }
 
 export interface ISignInParams {
-
-  email: string,
-  password: string,
-
+	phoneNumber: string;
+	password: string;
+	messageKey: string;
 }
 
-
 export interface IGetSessionRes {
+	id: number;
+	phoneNumber: string;
 
-  id: number,
-  email: string,
-
-  iat: number
-  exp: number
-
+	iat: number;
+	exp: number;
 }

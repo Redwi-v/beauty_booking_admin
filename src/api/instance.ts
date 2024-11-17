@@ -6,6 +6,9 @@ const apiInstance = axios.create({
 	baseURL: process.env.API_URL,
 	timeout: 10000,
 	withCredentials: true,
+	headers: {
+		appType: 'ADMIN',
+	},
 });
 
 export interface IResponseErr {

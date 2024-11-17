@@ -1,59 +1,29 @@
-import { IMaster } from '../masters.list/types';
-import { IGetListMeta } from '../types';
-
 export interface ICreateSalonBody {
 	name: string;
-	isOpen?: 0 | 1;
-	image?: File | null;
+	isOpen?: boolean;
 	description?: string;
+	image?: File;
 }
 
-export interface IUpdateSalonBody extends Partial<ICreateSalonBody> {}
+export interface IUpdateSalon extends Partial<ICreateSalonBody> {
+	salonId: number;
+}
+
+export interface IGetAllParams {
+	pagination?: {
+		take: number;
+		skip: number;
+	};
+	search?: string;
+}
 
 export interface ISalon {
-	salonId: number;
-	salonOwnerAccountId: number;
+	id: number;
+	adminAccountUserId: number;
 	name: string;
-	logoUrl?: string;
+	logoUrl: any;
 	isOpen: boolean;
 	description: string;
-	createdAt: Date;
-	updatedAt: Date;
-	branches: ISalonBranch[];
-	MasterAccount: IMaster[];
-	_count: {
-		branches: number;
-		MasterAccount: number;
-	};
-}
-
-export interface IGetOneSalon {}
-
-export type IGetSalonsListRes = {
-	list: Array<ISalon>;
-	meta: IGetListMeta;
-};
-
-export interface ISalonBranch {
-	id: number;
-	salonId: number;
-	address: {
-		id: number;
-		city: string;
-		address: string;
-		salonBranchId: number;
-	};
-}
-export interface ISalonBranchCreate {
-	address: string;
-	city: string;
-}
-
-export interface ICreateBranchRes {
-	id: number;
-	salonId: number;
-}
-
-export interface IGetSalonBranchesRes {
-	list: ISalonBranch[];
+	createdAt: string;
+	updatedAt: string;
 }

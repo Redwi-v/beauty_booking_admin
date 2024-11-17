@@ -5,13 +5,13 @@
 
   position: relative;
 
-  min-width: $apx-150;
-  width: $apx-150;
-  height: $apx-150;
+  min-width: 150px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   display: block;
 
-  border: $apx-3 solid var(--color-blue-200);
+  border: 3px solid var(--color-blue-200);
   overflow: hidden;
 
   cursor: pointer;
@@ -66,22 +66,5 @@
     
   }
 
-
-
-
-
 }
 
-@media (max-width: $mobile-breakpoint) {
-
-  .content {
-  
-    min-width: $apx-m-90;
-    width: $apx-m-90;
-    height: $apx-m-90;
-  
-    border: $apx-m-3 solid var(--color-blue-200);
-    
-  }
-  
-}

@@ -3,6 +3,7 @@ import { withAuth } from '@/components/hocs/auth';
 import Navigation from '@/components/ui/navigation';
 import type { Metadata } from 'next';
 import s from './main.module.scss';
+import { YMaps } from '@pbe/react-yandex-maps';
 
 const RootLayout = ({
 	children,
@@ -11,7 +12,7 @@ const RootLayout = ({
 }>) => {
 	return (
 		<div className={s.main}>
-			{children}
+			<YMaps>{children}</YMaps>
 			<Navigation className={s.navigation} />
 		</div>
 	);

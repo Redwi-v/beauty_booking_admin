@@ -14,20 +14,13 @@ export const withAuth = (WrappedComponent: any) => {
 			refetchOnWindowFocus: false,
 		});
 
-		const path = usePathname();
-
-		useEffect(() => {
-			if (data && !isLoading) {
-				router.push('/salons');
-			}
-		}, [data, isLoading]);
 
 		if (isLoading) {
 			return <span>loading...</span>;
 		}
 
 		if (isError) {
-			// router.push('/login');
+			router.push('/login');
 		}
 
 		return <WrappedComponent {...props} />;

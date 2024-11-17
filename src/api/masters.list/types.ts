@@ -1,117 +1,37 @@
-export interface IGetMastersListRes {
-	masters: IMaster[];
-
-	mastersCount: number;
-}
-export enum weeksDays {
-	'Monday',
-	'Tuesday',
-	'Wednesday',
-	'Thursday',
-	'Friday',
-	'Saturday',
-	'Sunday',
-}
-
-export interface IMaster {
-	id: number;
+export interface ICreateMasterBody {
+	telegramId: number;
+	salonBranchId: number;
+	speciality: string;
+	about: string;
+	avatar?: File | null;
+	canChangeSchedule: boolean;
+	canChangeBookingTime: boolean;
 	name: string;
 	lastName: string;
-	userdataId: number;
-	telegramId: number;
-	role: string;
-	salonId: number;
+}
+
+export interface IMasterAccount {
+	id: number;
 	salonBranchId: number;
 	rating: number;
 	speciality: string;
-	about: any;
-	avatar?: string;
-	email: string;
-	canChangeSchedule: boolean;
-
-	workingDays: weeksDays[];
-	startShift: string;
-	endShift: string;
-
-	masterService: Array<{
-		id: number;
-		price: number;
-		time: number;
-		name: string;
-		tagName: string;
-		salonId: number;
-		bookingId: number;
-	}>;
-
-	salonBranch: {
-		id: number;
-		salonId: number;
-		address: {
-			id: number;
-			city: string;
-			address: string;
-			salonBranchId: number;
-		};
-	};
-
-	Booking: IBooking[];
-}
-
-export interface IBooking {
-	id: number;
-	createdAt: string;
-	updatedAt: string;
-	time: string;
-	masterAccountId: number;
-	status: string;
-	clientTelegramId: string;
-	clientName: string;
-	clientPhone: string;
-	clientComment: any;
-	masterComment: string;
-	adminComment: any;
-	salonId: number;
-	salonBranchId: number;
-	services: Array<{
-		id: number;
-		price: number;
-		time: number;
-		name: string;
-		tagName: string;
-		salonId: number;
-	}>;
-	master: IMaster;
-}
-
-export interface ICreateMasterBody {
-	email: string;
-	lastName: string;
+	about: string;
 	name: string;
-	speciality: string;
-	salonBranchId: number;
-	avatar: File;
+	lastName: string;
+	avatar: string | null;
 	canChangeSchedule: boolean;
+	canChangeBookingTime: boolean;
 	telegramId: string;
-	servicesIdArray?: number[];
-	startShift: Date;
-	endShift: Date;
-	workingDays: string[];
+	Booking: any[];
+	masterService: any[];
+	workingsDays: any[];
 }
 
-export interface IUpdateMasterBody {
-	name?: string;
-	lastName?: string;
-	rating?: number;
-	speciality?: string;
-	about?: string;
-	servicesIdArray?: number[];
-	telegramId?: string;
+export interface IUpdateMasterBody extends Partial<ICreateMasterBody> {}
+
+export interface IGetMastersParams {
+	skip?: number;
+	take?: number;
+	search?: number;
 	salonBranchId?: number;
-}
-
-export interface IGetFreeTimeParams {
-	date?: Date;
-	bookingId?: number | null;
-	masterId?: number | string;
-	servicesIdList?: string[];
 }
