@@ -55,6 +55,7 @@ import {
 	ActionBarSeparator,
 } from '@/components/ui/action-bar';
 import Link from 'next/link';
+import axios from 'axios';
 
 interface SalonsPageViewProps {}
 
@@ -89,6 +90,7 @@ const SalonsPageView: FC<SalonsPageViewProps> = () => {
 	const [activePage, setActivePage] = useState(1);
 	const paginationItemsCount = 5;
 	const searchDebounce = useDebounce(search, 1000);
+
 
 	useEffect(() => {
 		setActivePage(1);

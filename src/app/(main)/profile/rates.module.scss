@@ -1,89 +1,118 @@
 @import '@/styles/apx.scss';
 @import '@/styles/breakpoints.scss';
 
+.controls {
+	display: flex;
+	flex-direction: column;
+	font-size: 18px;
+	gap: 10px;
+
+	margin-top: 25px;
+	a {
+	}
+
+	.red_link {
+		color: var(--color-red) !important;
+	}
+}
+
 .content {
   
-	padding-left: $apx-30;
-	padding-right: $apx-30;
+	padding-left: 30px;
+	padding-right: 30px;
+
+
+
 
 	.title {
 		text-align: left;
-		padding-top: $apx-30;
-		font-size: $apx-40 !important;
+		padding-top: 20px;
+		font-size: 40px !important;
 		text-transform: uppercase;
 	}
 
 	.user_info {
-		margin-top: $apx-40;
+		margin-top: 40px;
 		display: flex;
 	}
 
 	.avatar {
-		margin-right: $apx-20;
-		border-radius: $apx-20;
+		margin-right: 20px;
+		border-radius: 20px;
 
-		width: $apx-150 !important;
-		height: $apx-150 !important;
+		width: 150px !important;
+		height: 150px !important;
 	}
 
 	.name {
-		font-size: $apx-25;
-		margin-top: $apx-10;
+		font-size: 25px;
+		margin-top: 10px;
 	}
 
-	.subscription {
-		margin-top: $apx-10;
-		font-size: $apx-18;
+	.subscription,.phoneNumber {
+		margin-top: 10px;
+		font-size: 18px;
 
 		span {
 			background: var(--color-green);
-			padding: $apx-3;
-			border-radius: $apx-10;
+			padding: 3px;
+			border-radius: 10px;
+		padding: 5px;
+
+		}
+
+		span.red {
+			background: var(--color-red);
+			color: var(--color-white);
 		}
 	}
 }
+
+
 
 @media (max-width: $mobile-breakpoint) {
 	
 
 	.content {
   
-		padding-left: $apx-m-10;
-		padding-right: $apx-m-10;
+		padding-left: 10px;
+		padding-right: 10px;
+
 	
 		.title {
 			text-align: left;
-			padding-top: $apx-m-20;
-			font-size: $apx-m-30 !important;
+			padding-top: 20px;
+			font-size: 30px !important;
 			text-transform: uppercase;
 		}
 	
 		.user_info {
-			margin-top: $apx-m-20;
+			margin-top: 20px;
 			display: flex;
+			flex-direction: column;
 		}
 	
 		.avatar {
-			margin-right: $apx-m-20;
-			border-radius: $apx-m-20;
+			margin-right: 20px;
+			border-radius: 20px;
 	
-			width: $apx-m-130 !important;
-			height: $apx-m-130 !important;
+			width: 130px !important;
+			height: 130px !important;
 		}
 	
 		.name {
-			font-size: $apx-m-20;
-			margin-top: $apx-m-5;
+			font-size: 20px;
+			margin-top: 5px;
 		}
 	
 		.subscription {
-			margin-top: $apx-m-5;
-			font-size: $apx-m-18;
+			margin-top: 5px;
+			font-size: 18px;
 	
 			span {
 				background: var(--color-green);
 				padding: 0;
-				border-radius: $apx-m-5;
+				border-radius: 5px;
 			}
 		}
 	}

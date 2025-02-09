@@ -15,10 +15,10 @@ const nextConfig = {
     //  DEV
 
     TELEGRAM_APP_URL: "https://t.me/beauty_client_bot/beauty_client",
-    WEB_APP_URL: "http://localhost:3002",
-    API_URL: "http://localhost:8888",
+    WEB_APP_URL: "https://clientbeauty.ru.tuna.am",
+    API_URL: "https://beauty-back.ru.tuna.am",
 
-    PHONE_CONFIRM_WIDGET_ID: "PMjbe6",
+    PHONE_CONFIRM_WIDGET_ID: "R2shLA",
     CAPTCHA_SITEKEY: "2c8ef686-d204-4faa-b12c-823e55a8d4e8",
   },
   images: { 

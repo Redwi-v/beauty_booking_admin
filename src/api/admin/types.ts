@@ -39,16 +39,21 @@ interface IResponseData {
 }
 
 export interface IProfileRes {
-	id: number;
-	ownerId: number;
-	name: string;
-	lastName: string;
-	owner: Owner;
-	subscription: ISubscription;
-
-	subscriptionTypeId: number;
-	subscriptionStartDate: Date;
-	subscriptionEndDate: Date;
+  userId: number
+  phoneNumber: string
+  role: string
+  subscriptionTypeId: number
+  subscriptionStartDate: string
+  subscriptionEndDate: string
+  subscription: {
+    id: number
+    durationMouths: number
+    durationDays: number
+    price: number
+    title: string
+    subTitle: string
+    isStartingSubscription: boolean
+  }
 }
 
 interface Owner {

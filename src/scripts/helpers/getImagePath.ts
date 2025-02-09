@@ -1,2 +1,2 @@
 export const getImagePath = (name: string | null) =>
-	name ? `http://localhost:8888/files/${name}` : undefined;
+	name ? `${process.env.API_URL}/files/${name}` : undefined;

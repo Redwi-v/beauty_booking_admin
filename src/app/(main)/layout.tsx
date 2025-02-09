@@ -2,8 +2,10 @@
 import { withAuth } from '@/components/hocs/auth';
 import Navigation from '@/components/ui/navigation';
 import type { Metadata } from 'next';
+import '@schedule-x/theme-default/dist/index.css';
 import s from './main.module.scss';
 import { YMaps } from '@pbe/react-yandex-maps';
+
 
 const RootLayout = ({
 	children,

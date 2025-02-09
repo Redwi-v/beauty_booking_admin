@@ -35,6 +35,7 @@ export const salonBranchApi = {
 				take: params.pagination?.take,
 				skip: params.pagination?.skip,
 				search: params.search,
+				salonId: params.salonId,
 			},
 		});
 

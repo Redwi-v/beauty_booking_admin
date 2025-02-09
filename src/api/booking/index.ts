@@ -1,5 +1,5 @@
+import { IEvent } from '../events/types';
 import apiInstance from '../instance';
-import { IBooking } from '../masters.list/types';
 import { ICreateBookingData, IGetBookingListRes } from './types';
 
 export const bookingApi = {
@@ -20,7 +20,7 @@ export const bookingApi = {
 	},
 
 	getAllBooking(branchId: number, salonId: number) {
-		return apiInstance.get<IBooking[]>(`/salons/booking/all`, {
+		return apiInstance.get<IEvent[]>(`/salons/booking/all`, {
 			params: {
 				branchId,
 				salonId,

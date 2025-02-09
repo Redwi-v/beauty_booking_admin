@@ -58,8 +58,8 @@ type Inputs = {
 	address: string;
 	id?: number;
 
-	latitude?: string;
-	longitude?: string;
+	latitude?: number;
+	longitude?: number;
 };
 
 const DotsTab: FC<IDotsTabProps> = props => {
@@ -71,10 +71,17 @@ const DotsTab: FC<IDotsTabProps> = props => {
 		register,
 		handleSubmit,
 		watch,
+		getValues,
 		reset,
 		formState: { errors },
 		setValue,
-	} = useForm<Inputs>();
+	} = useForm<Inputs>({
+		defaultValues: {
+			address: '',
+			latitude: 55.75,
+			longitude: 37.57,
+		},
+	});
 
 	const [startCoordinates, setStartCoordinates] = useState([55.75, 37.57]);
 
@@ -84,8 +91,8 @@ const DotsTab: FC<IDotsTabProps> = props => {
 			return updateSalonBranchMutation.mutate({
 				salonId: +id,
 				address: data.address,
-				latitude: data.latitude,
-				longitude: data.longitude,
+				latitude: String(getValues('latitude')!),
+				longitude: String(getValues('longitude')!),
 				id: data.id,
 			});
 		}
@@ -94,8 +101,8 @@ const DotsTab: FC<IDotsTabProps> = props => {
 			address: data.address,
 			isOpen: false,
 			salonId: +id,
-			latitude: data.latitude!,
-			longitude: data.longitude!,
+			latitude: String(getValues('latitude')!),
+			longitude: String(getValues('longitude')!),
 		});
 	};
 
@@ -103,6 +110,8 @@ const DotsTab: FC<IDotsTabProps> = props => {
 	const [activePage, setActivePage] = useState(1);
 	const paginationItemsCount = 5;
 	const searchDebounce = useDebounce(search, 1000);
+
+	const { id: salonId } = useParams();
 
 	const {
 		data: branchesListData,
@@ -117,6 +126,7 @@ const DotsTab: FC<IDotsTabProps> = props => {
 					take: paginationItemsCount,
 					skip: activePage === 1 ? 0 : (activePage - 1) * paginationItemsCount,
 				},
+				salonId: +salonId,
 			}),
 	});
 
@@ -237,7 +247,9 @@ const DotsTab: FC<IDotsTabProps> = props => {
 					onClick={() => {
 						setValue('address', item.address);
 						setValue('id', item.id);
-						setStartCoordinates([+item.latitude, +item.longitude]);
+						setStartCoordinates([+item.latitude, +item.longitude])
+						setValue('latitude', +item.latitude);
+						setValue('longitude', +item.longitude);
 						setFormModalOpen(true);
 					}}
 				>
@@ -471,7 +483,11 @@ const DotsTab: FC<IDotsTabProps> = props => {
 								width={'100%'}
 								height={'100%'}
 								options={{}}
-								defaultState={{ center: startCoordinates, zoom: 9, controls: [] }}
+								defaultState={{
+									center: startCoordinates,
+									zoom: 9,
+									controls: [],
+								}}
 							>
 								<SearchControl options={{ float: 'right' }} />
 								<Placemark

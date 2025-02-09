@@ -1,33 +1,30 @@
-export interface ICreateServiceBody {
-	tagName: string;
-	price: number;
-	time: number;
+import { IMasterAccount } from '../masters.list/types';
+
+export interface ICreateService {
 	name: string;
-	salonId: number;
+	price: number;
+	duration: number;
+	masterAccountsId: number[];
+	serviceTagId: number;
 }
 
-export interface IUpdateServiceBody extends Partial<Omit<ICreateServiceBody, 'salonId'>> {}
+export interface IUpdateService extends Partial<ICreateService> {}
 
-export interface ICreateServiceRes extends ICreateServiceBody {
+export interface IService {
 	id: number;
+	serviceTagId: number;
+	name: string;
+	price: number;
+	duration: number;
+	bookingId: any;
+	bookingList: any[];
+	masterAccounts: IMasterAccount[];
+	serviceTag: IServiceTag;
 }
 
-export interface IGetServicesListParams {
-	tagName?: string;
-	search?: string;
-	masterId?: number;
-}
-
-export interface IGetServicesListRes {
-	list: Array<{
-		tagName: string;
-		services: Array<{
-			id: number;
-			price: number;
-			time: number;
-			tagName: string;
-			salonId: number;
-			name: string;
-		}>;
-	}>;
+export interface IServiceTag {
+	id: number;
+	salonId: number;
+	name: string;
+	services: IService[];
 }

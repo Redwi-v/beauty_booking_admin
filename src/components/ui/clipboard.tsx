@@ -25,7 +25,7 @@ const ClipboardCopyText = forwardRef<
 >(function ClipboardCopyText(props, ref) {
   return (
     <ChakraClipboard.Indicator copied="Copied" {...props} ref={ref}>
-      Copy
+      Скопировать ссылку
     </ChakraClipboard.Indicator>
   )
 })

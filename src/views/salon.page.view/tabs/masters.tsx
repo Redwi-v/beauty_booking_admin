@@ -62,7 +62,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { FC, useEffect, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { LuBox, LuCalendar, LuPen, LuSearch } from 'react-icons/lu';
-import { number } from 'yup';
+import MastersScheduleForm from '../forms/masters.schedule';
+import { useParams } from 'next/navigation';
 interface IMastersTabProps {}
 
 type Inputs = {
@@ -89,9 +90,11 @@ const MastersTab: FC<IMastersTabProps> = props => {
 		setValue,
 		setError,
 		control,
+		clearErrors,
 
 		formState: { errors },
 	} = useForm<Inputs>();
+
 	const onSubmit: SubmitHandler<Inputs> = data => {
 		if (!data.salonBranchId) return setError('salonBranchId', { message: requiredMessage });
 
@@ -116,16 +119,23 @@ const MastersTab: FC<IMastersTabProps> = props => {
 		});
 	};
 
+	useEffect(() => {
+		clearErrors('salonBranchId');
+	}, [watch('salonBranchId')]);
+
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [createModalIsOpen, setCreateModalOpen] = useState(false);
+	const [masterFormId, setMasterFormId] = useState<number | null>(null);
 
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 	const [search, setSearch] = useState('');
+	const searchDebounce = useDebounce(search, 1000);
 	const [activePage, setActivePage] = useState(1);
 	const paginationItemsCount = 10;
-	const searchDebounce = useDebounce(search, 1000);
+	const [workingAddressId, setWorkingAddressId] = useState<null | number>(null);
 
+	const { id: salonID } = useParams();
 	useEffect(() => {
 		setActivePage(1);
 	}, [searchDebounce]);
@@ -135,22 +145,35 @@ const MastersTab: FC<IMastersTabProps> = props => {
 		isLoading: mastersIsLoading,
 		refetch: refetchMastersList,
 	} = useQuery({
-		queryKey: ['MASTERS_DATA'],
-		queryFn: () => mastersListApi.getList({}),
+		queryKey: ['MASTERS_DATA', paginationItemsCount, searchDebounce, activePage, workingAddressId],
+		queryFn: () =>
+			mastersListApi.getList({
+				take: paginationItemsCount,
+				search: searchDebounce,
+				skip: activePage === 1 ? 0 : (activePage - 1) * paginationItemsCount,
+				salonBranchId: workingAddressId || undefined,
+				salonId: +salonID!,
+			}),
 	});
 
 	const {
 		data: salonsBranchesData,
 		isSuccess: branchesDataSuccess,
 		isLoading: branchesDataIsLoading,
+		refetch: refetchBranches
 	} = useQuery({
-		queryKey: ['SALON_BRANCH'],
-		queryFn: () => salonBranchApi.getBranchesList({}),
+		queryKey: ['SALON_BRANCHES_LIST'],
+		queryFn: () =>
+			salonBranchApi.getBranchesList({ salonId: +salonID!, pagination: { skip: 0, take: 100 } }),
 	});
 
 	useEffect(() => {
+		refetchBranches()
+	}, [])
+
+	useEffect(() => {
 		if (!branchesDataIsLoading && branchesDataSuccess && salonsBranchesData?.data)
-			setValue('salonBranchId', String(salonsBranchesData.data.list[0].id));
+			setValue('salonBranchId', String(salonsBranchesData.data.list[0]?.id));
 	}, [branchesDataSuccess, branchesDataIsLoading]);
 
 	const createMasterMutation = useMutation({
@@ -195,6 +218,34 @@ const MastersTab: FC<IMastersTabProps> = props => {
 			});
 
 			return promise;
+		},
+		onSuccess: () => {
+			setCreateModalOpen(false);
+			refetchMastersList();
+		},
+	});
+
+	const deleteMastersMutation = useMutation({
+		mutationFn: () => {
+			const promise = mastersListApi.delete(selection.map(id => +id));
+			toaster.promise(promise, {
+				loading: {
+					title: 'Удаление записи',
+				},
+				success: {
+					title: 'Запись успешно удалена',
+				},
+				error: {
+					title: 'Что то пошло не так',
+				},
+			});
+
+			return promise;
+		},
+		onSuccess: () => {
+			setDeleteModalOpen(false);
+			setSelection([]);
+			refetchMastersList();
 		},
 	});
 
@@ -242,7 +293,7 @@ const MastersTab: FC<IMastersTabProps> = props => {
 				whiteSpace={'normal'}
 				display={{ base: 'none', md: 'table-cell' }}
 			>
-				{item.about || '- '}
+				{item.speciality || '- '}
 			</Table.Cell>
 			<Table.Cell verticalAlign={'middle'}>
 				<Flex
@@ -250,7 +301,7 @@ const MastersTab: FC<IMastersTabProps> = props => {
 					justifyContent={'end'}
 					gap={2}
 				>
-					<IconButton>
+					<IconButton onClick={() => setMasterFormId(+item.id)}>
 						<LuCalendar />
 					</IconButton>
 					<IconButton
@@ -273,8 +324,6 @@ const MastersTab: FC<IMastersTabProps> = props => {
 			</Table.Cell>
 		</Table.Row>
 	));
-
-	console.log(watch('salonBranchId'));
 
 	const contentRef = useRef<HTMLDivElement>(null);
 
@@ -308,6 +357,32 @@ const MastersTab: FC<IMastersTabProps> = props => {
 					/>
 				</InputGroup>
 			</Flex>
+
+			<Field errorText={errors.salonBranchId?.message}>
+				<SelectRoot
+					collection={salonsBranchesSelect}
+					mt={5}
+					value={[String(workingAddressId)]}
+					onValueChange={e => {
+						setWorkingAddressId(+e.value[0] || null);
+					}}
+				>
+					<SelectLabel>Выберете адрес работы</SelectLabel>
+					<SelectTrigger clearable>
+						<SelectValueText placeholder='Адрес ' />
+					</SelectTrigger>
+					<SelectContent portalRef={contentRef}>
+						{salonsBranchesSelect.items.map(item => (
+							<SelectItem
+								item={item}
+								key={item.value}
+							>
+								{item.label}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</SelectRoot>
+			</Field>
 
 			{mastersIsLoading || (mastersList?.data && mastersList?.data?.list.length > 0) ? (
 				<Stack
@@ -345,7 +420,7 @@ const MastersTab: FC<IMastersTabProps> = props => {
 									</Table.ColumnHeader>
 									<Table.ColumnHeader>ФИО</Table.ColumnHeader>
 									<Table.ColumnHeader display={{ base: 'none', md: 'table-cell' }}>
-										о мастере
+										Специальность
 									</Table.ColumnHeader>
 									<Table.ColumnHeader textAlign={'end'}>Действия</Table.ColumnHeader>
 								</Table.Row>
@@ -457,13 +532,34 @@ const MastersTab: FC<IMastersTabProps> = props => {
 						</DialogActionTrigger>
 						<Button
 							onClick={() => {
-								// deleteSalonsMutation.mutate();
+								deleteMastersMutation.mutate();
 							}}
 							colorPalette='red'
 						>
 							Удалить
 						</Button>
 					</DialogFooter>
+					<DialogCloseTrigger />
+				</DialogContent>
+			</DialogRoot>
+
+			<DialogRoot
+				open={typeof masterFormId === 'number'}
+				onOpenChange={value => setMasterFormId(null)}
+				role='alertdialog'
+			>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Расписание для</DialogTitle>
+					</DialogHeader>
+
+					<DialogBody>
+						<MastersScheduleForm
+							closeForm={() => setMasterFormId(null)}
+							masterId={masterFormId}
+						/>
+					</DialogBody>
+
 					<DialogCloseTrigger />
 				</DialogContent>
 			</DialogRoot>
@@ -595,7 +691,7 @@ const MastersTab: FC<IMastersTabProps> = props => {
 										}}
 									>
 										<SelectLabel>Выберете адрес работы</SelectLabel>
-										<SelectTrigger clearable>
+										<SelectTrigger>
 											<SelectValueText placeholder='Адрес ' />
 										</SelectTrigger>
 										<SelectContent portalRef={contentRef}>

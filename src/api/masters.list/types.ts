@@ -32,6 +32,7 @@ export interface IUpdateMasterBody extends Partial<ICreateMasterBody> {}
 export interface IGetMastersParams {
 	skip?: number;
 	take?: number;
-	search?: number;
+	search?: string;
 	salonBranchId?: number;
+	salonId: number;
 }

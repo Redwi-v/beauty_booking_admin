@@ -32,5 +32,7 @@ export interface IGetSalonBranchesListParams {
 		skip: number;
 	};
 
+	salonId: number;
+
 	search?: string;
 }

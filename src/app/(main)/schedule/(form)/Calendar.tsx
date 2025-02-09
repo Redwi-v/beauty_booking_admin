@@ -1,387 +1,283 @@
-import FullCalendar from '@fullcalendar/react';
+'use client';
+import { useNextCalendarApp, ScheduleXCalendar } from '@schedule-x/react';
+import {
+	createViewDay,
+	createViewMonthAgenda,
+	createViewMonthGrid,
+	createViewWeek,
+} from '@schedule-x/calendar';
+import { createEventsServicePlugin } from '@schedule-x/events-service';
+import { createDragAndDropPlugin } from '@schedule-x/drag-and-drop';
 import { FC, useEffect, useState } from 'react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
-import s from '../schedule.module.scss';
-import { EventContentArg, EventInput, EventSourceInput } from '@fullcalendar/core/index.js';
+import { useQuery } from '@tanstack/react-query';
+import { eventsApi } from '@/api/events';
+import { SalonApi } from '@/api/salons.list';
+import { createListCollection, Flex, SelectRoot } from '@chakra-ui/react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Field } from '@/components/ui/field';
+import { watch } from 'fs';
+import { salonBranchApi } from '@/api/salonBranch';
+import { SelectContent, SelectItem, SelectTrigger, SelectValueText } from '@/components/ui/select';
 import moment from 'moment';
-import { IBooking, IMaster } from '@/api/masters.list/types';
-import Popup from 'reactjs-popup';
-import { H2, P } from '@/components/containers/text';
-import { Button, buttonTypes } from '@/components/inputs/button';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { bookingApi } from '@/api/booking';
-import { ChoiceServiceView } from './choice.service';
-import { useAppointmentStore } from './appointment/model/appointment.store';
-import { TimeListPicker } from '@/components/ui/time.picker.list/ui/time.picker';
-import { MastersListApi } from '@/api/masters.list';
-import { EntryConfirmView } from './entry.confirm.view';
-import Select from 'react-select';
-interface ICalendarProps {
-	master?: IMaster;
-	refetch: () => void;
-	branchId: number | null;
-	salonId: number | null;
-	masters: IMaster[];
-}
+import { mastersListApi } from '@/api/masters.list';
+import DialogForm from './dialog.form';
+import { createEventModalPlugin } from '@schedule-x/event-modal';
 
-const Calendar: FC<ICalendarProps> = props => {
-	const { master, refetch, branchId, salonId, masters } = props;
+interface ICalendarProps {}
 
-	const deleteBookingMutation = useMutation({
-		mutationFn: (id: number) => bookingApi.delete(id),
-		onSuccess: () => {
-			setInfoPopUpIsOpen(null);
-			refetch();
+type Inputs = {
+	activeSalonId: string[];
+	activeBranchId: string[];
+	activeMasterId: string[];
+
+	updateEventId: number | undefined;
+};
+
+const FullCalendar: FC<ICalendarProps> = props => {
+	const {
+		register,
+		handleSubmit,
+		watch,
+		control,
+		formState: { errors },
+		setValue,
+	} = useForm<Inputs>({
+		defaultValues: {
+			updateEventId: undefined,
 		},
 	});
+	const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
 
-	const {
-		data: allBooking,
-		refetch: refetchAllBooking,
-		isSuccess: allBookingSuccess,
-	} = useQuery({
-		queryKey: ['BookingAll', branchId, salonId],
-		queryFn: () => bookingApi.getAllBooking(branchId!, salonId!),
-		enabled: !!branchId && !!salonId,
+	const eventsService = useState(() => createEventsServicePlugin())[0];
+	const eventModal = createEventModalPlugin();
+
+	const { data: salons } = useQuery({
+		queryKey: ['SALONS'],
+		queryFn: () => SalonApi.getAllSalons({ pagination: { skip: 0, take: 100 } }),
 	});
 
-	useEffect(() => {
-		if (allBookingSuccess) {
-			setEvents(
-				allBooking.data.map(booking => {
-					return { date: booking.time, id: String(booking.id) };
-				}),
-			);
-		}
-	}, [allBookingSuccess, allBooking]);
+	const salonsCollection = createListCollection({
+		items: salons?.list ? salons?.list.map(item => ({ label: item.name, value: item.id })) : [],
+	});
 
-	const [events, setEvents] = useState<EventInput[]>([]);
-	const [activeUpdateBookingId, setActiveUpdateBookingId] = useState<number | null>(null);
+	const { data: salonBranches } = useQuery({
+		queryKey: ['SALONS-BRANCHES', watch('activeSalonId')?.[0]],
+		enabled: !!watch('activeSalonId')?.[0],
+		queryFn: () => salonBranchApi.getBranchesList({ salonId: +watch('activeSalonId')?.[0]! }),
+	});
 
-	const [step, setStep] = useState(1);
+	const salonBranchesCollection = createListCollection({
+		items: salonBranches?.data.list
+			? salonBranches.data.list.map(item => ({ label: item.address, value: item.id }))
+			: [],
+	});
 
-	useEffect(() => {
-		if (!master) {
-			return;
-		}
-
-		setEvents(
-			master.Booking.map(booking => {
-				return { date: booking.time, id: String(booking.id) };
-			}),
-		);
-	}, [master]);
-
-	const [infoPopUpIsOpen, setInfoPopUpIsOpen] = useState<null | IBooking>(null);
-
-	const openInfoPopUp = (event: IBooking) => {
-		setInfoPopUpIsOpen(event);
-	};
-
-	function renderEventContent(eventInfo: EventContentArg) {
-		const activeEvent = master
-			? master.Booking.find(booking => +eventInfo.event.id === booking.id)
-			: allBooking?.data.find(booking => +eventInfo.event.id === booking.id);
-
-		if (!activeEvent) return 'hello';
-
-		const allMinutes = activeEvent.services.reduce((prev, service) => {
-			return service.time + prev;
-		}, 0);
-
-		return (
-			<button
-				onClick={() => openInfoPopUp(activeEvent)}
-				className={s.schedule_event}
-			>
-				{!master && (
-					<div>Мастер: {activeEvent.master.name + ' ' + activeEvent.master.lastName}</div>
-				)}
-				<div>Клиент: {activeEvent.clientName}</div>
-				<div>
-					Время: {moment(activeEvent.time).format('HH:mm')} -
-					{moment(activeEvent.time).add({ minutes: allMinutes }).format('HH:mm')}
-				</div>
-			</button>
-		);
-	}
-
-	const [addEventPopupIsOpen, setAddEventPopupIsOpen] = useState(false);
-
-	const allMinutes = infoPopUpIsOpen
-		? infoPopUpIsOpen.services.reduce((prev, service) => {
-				return service.time + prev;
-		  }, 0)
-		: 0;
-
-	const {
-		date,
-		setDateAndTime,
-		services,
-		time: stateTime,
-		setMasterId,
-		setSalonBranch,
-		setServices,
-		clear,
-		masterId,
-	} = useAppointmentStore(store => store);
-
-	useEffect(() => {
-		if (activeUpdateBookingId) return;
-
-		setServices([]);
-		setDateAndTime(date, null);
-		setStep(1);
-	}, [masterId]);
-
-	const handleDateClick = (arg: DateClickArg) => {
-		if (
-			(moment().isAfter(arg.dateStr) && moment().format('YYYY-MM-DD') !== arg.dateStr) ||
-			!branchId ||
-			!salonId
-		)
-			return;
-
-		setActiveUpdateBookingId(null);
-		clear();
-		setStep(1);
-		setTime('');
-		setDateAndTime(arg.dateStr, null);
-		setAddEventPopupIsOpen(true);
-	};
-
-	const [time, setTime] = useState(stateTime || '');
-
-	const { data: freeTime } = useQuery({
-		queryKey: ['FreeTime', date, masterId, services],
+	const { data: mastersData } = useQuery({
+		queryKey: ['SALONS-BRANCHES', watch('activeBranchId')?.[0], watch('activeSalonId')?.[0]],
+		enabled: !!watch('activeBranchId')?.[0] && !!watch('activeSalonId')?.[0],
 		queryFn: () =>
-			MastersListApi.getFreeTime({
-				date: moment(date).toDate(),
-				masterId: masterId!,
-				bookingId: activeUpdateBookingId,
-				servicesIdList: services.map(item => String(item)),
+			mastersListApi.getList({
+				salonId: +watch('activeSalonId')?.[0],
+				salonBranchId: +watch('activeBranchId')?.[0],
 			}),
-		enabled: !!masterId,
 	});
-	
+
+	const mastersCollections = createListCollection({
+		items: mastersData?.data.list
+			? mastersData.data.list.map(item => ({
+					label: item.name + ' ' + item.lastName,
+					value: item.id,
+				}))
+			: [],
+	});
+
+	const { data: events, refetch: refetchEvents } = useQuery({
+		queryKey: [
+			'EVENTS',
+			+watch('activeSalonId')?.[0]!,
+			+watch('activeBranchId')?.[0]!,
+			+watch('activeMasterId')?.[0]!,
+		],
+		enabled: !!watch('activeSalonId')?.[0],
+		queryFn: () =>
+			eventsApi.getList(
+				+watch('activeSalonId')?.[0]!,
+				+watch('activeBranchId')?.[0],
+				+watch('activeMasterId')?.[0],
+			),
+	});
+
+	// init каледаря
+	const calendar = useNextCalendarApp(
+		{
+			views: [createViewDay(), createViewWeek(), createViewMonthGrid(), createViewMonthAgenda()],
+			locale: 'ru-RU',
+
+			events: [],
+			callbacks: {
+				onDoubleClickEvent(calendarEvent) {
+					setValue('updateEventId', +calendarEvent.id);
+				},
+			},
+		},
+		[eventsService, eventModal],
+	);
+
+	// обновить эвенты в каледаре
+	useEffect(() => {
+		if (!events) return;
+
+		const newEvents = events.data.map(item => {
+			let endTime = 0;
+			endTime += +item.start.split(' ')[1].split(':')[0] * 60;
+			endTime += +item.start.split(' ')[1].split(':')[1];
+			endTime += item.duration;
+
+			return {
+				id: item.id || 0,
+				title: item.title,
+				start: item.start.replaceAll('.', '-'),
+				location: item.salonBranch.address,
+				people: [item.master.name + ' ' + item.master.lastName],
+				description: `
+					Клиент: ${item.clientName} \r\n ${item.clientLastName} \r\n ${item.clientNumber}
+				`,
+
+				end:
+					item.start.replaceAll('.', '-').split(' ')[0] +
+					' ' +
+					moment().set({ hours: 0, minutes: endTime }).format('HH:mm'),
+			};
+		});
+		eventsService.set(newEvents);
+	}, [events]);
+
 	return (
-		<>
-			<FullCalendar
-				viewClassNames={s.calendar}
-				plugins={[dayGridPlugin, interactionPlugin]}
-				height={'auto'}
-				dayMaxEvents={3}
-				buttonText={{
-					month: 'Месяц',
-					week: 'Неделя',
-					today: 'Сегодня',
-				}}
-				initialView='dayGridMonth'
-				dateClick={handleDateClick}
-				headerToolbar={{
-					left: 'prev,next today',
-					center: 'title',
-					right: 'dayGridMonth,dayGridWeek',
-				}}
-				initialDate='2024-10-12'
-				locale={'ru'}
-				eventClassNames={s.event_wrapper}
-				stickyHeaderDates
-				events={events}
-				eventContent={renderEventContent}
+		<div>
+			<DialogForm
+				updateEvent={
+					watch('updateEventId')
+						? events?.data.find(event => event.id === watch('updateEventId')) || null
+						: null
+				}
+				refetch={() => refetchEvents()}
+				setEventId={() => setValue('updateEventId', undefined)}
 			/>
-
-			<Popup
-				open={!!infoPopUpIsOpen}
-				closeOnDocumentClick
-				closeOnEscape
-				onClose={() => {
-					setInfoPopUpIsOpen(null);
-				}}
-				overlayStyle={{
-					zIndex: 100000,
-				}}
+			<Flex
+				gap={5}
+				marginBottom={5}
 			>
-				<div className='modal'>
-					<H2 className='modal_header'>
-						Запись на {moment(infoPopUpIsOpen?.time).locale('ru').format('DD MMMM YYYY HH:mm')}
-					</H2>
-				</div>
+				<Field
+					marginTop={5}
+					label='Салон'
+					invalid={!!errors.activeSalonId}
+					errorText={errors.activeSalonId?.message}
+				>
+					<Controller
+						control={control}
+						name='activeSalonId'
+						render={({ field }) => (
+							<SelectRoot
+								name={field.name}
+								value={field.value}
+								onValueChange={({ value }) => field.onChange(value)}
+								onInteractOutside={() => field.onBlur()}
+								collection={salonsCollection}
+							>
+								<SelectTrigger>
+									<SelectValueText placeholder='Выберете салон' />
+								</SelectTrigger>
+								<SelectContent>
+									{salonsCollection.items.map(salon => (
+										<SelectItem
+											item={salon}
+											key={salon.value}
+										>
+											{salon.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</SelectRoot>
+						)}
+					/>
+				</Field>
 
-				<P>Имя клинета: {infoPopUpIsOpen?.clientName}</P>
-				<div>
-					{infoPopUpIsOpen?.clientComment && (
-						<>
-							<P>Комментарий клиента:</P>
-							<P>{infoPopUpIsOpen?.clientComment}</P>
-						</>
-					)}
+				<Field
+					marginTop={5}
+					label='Точка'
+					invalid={!!errors.activeBranchId}
+					errorText={errors.activeBranchId?.message}
+					disabled={!!!watch('activeSalonId')?.[0]}
+				>
+					<Controller
+						control={control}
+						name='activeBranchId'
+						render={({ field }) => (
+							<SelectRoot
+								name={field.name}
+								value={field.value}
+								onValueChange={({ value }) => field.onChange(value)}
+								onInteractOutside={() => field.onBlur()}
+								collection={salonBranchesCollection}
+							>
+								<SelectTrigger>
+									<SelectValueText placeholder='Выберете адрес' />
+								</SelectTrigger>
+								<SelectContent>
+									{salonBranchesCollection.items.map(salon => (
+										<SelectItem
+											item={salon}
+											key={salon.value}
+										>
+											{salon.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</SelectRoot>
+						)}
+					/>
+				</Field>
 
-					{infoPopUpIsOpen?.adminComment && (
-						<>
-							<P>Комментарий админа:</P>
-							<P>{infoPopUpIsOpen?.adminComment}</P>
-						</>
-					)}
+				<Field
+					marginTop={5}
+					label='Мастер'
+					invalid={!!errors.activeBranchId}
+					errorText={errors.activeBranchId?.message}
+					disabled={!!!watch('activeBranchId')?.[0]}
+				>
+					<Controller
+						control={control}
+						name='activeMasterId'
+						render={({ field }) => (
+							<SelectRoot
+								name={field.name}
+								value={field.value}
+								onValueChange={({ value }) => field.onChange(value)}
+								onInteractOutside={() => field.onBlur()}
+								collection={mastersCollections}
+							>
+								<SelectTrigger>
+									<SelectValueText placeholder='Выберете мастера' />
+								</SelectTrigger>
+								<SelectContent>
+									{mastersCollections.items.map(salon => (
+										<SelectItem
+											item={salon}
+											key={salon.value}
+										>
+											{salon.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</SelectRoot>
+						)}
+					/>
+				</Field>
+			</Flex>
 
-					{infoPopUpIsOpen?.masterComment && (
-						<>
-							<P>Комментарий мастера:</P>
-							<P>{infoPopUpIsOpen?.masterComment}</P>
-						</>
-					)}
-				</div>
-				<P>
-					Время: {moment(infoPopUpIsOpen?.time).format('HH:mm')} -
-					{moment(infoPopUpIsOpen?.time).add({ minutes: allMinutes }).format('HH:mm')}
-				</P>
-				<P>Процедуры:</P>
-				<ul className={s.popup_info_services}>
-					{infoPopUpIsOpen &&
-						infoPopUpIsOpen.services.map(item => {
-							return (
-								<li>
-									<P>{item.name}</P>
-									<P>{item.price}р</P>
-									<P>{moment().hour(0).minutes(0).add({ minutes: item.time }).format('HH:mm')}ч</P>
-								</li>
-							);
-						})}
-				</ul>
-
-				<div className={s.info_popup_controls}>
-					<Button
-						type={buttonTypes.blue}
-						buttonParams={{
-							onClick: () => {
-								if (!infoPopUpIsOpen) return;
-
-								setActiveUpdateBookingId(infoPopUpIsOpen?.id);
-								setDateAndTime(
-									moment(infoPopUpIsOpen.time).format('MM.DD.YYYY'),
-									moment(infoPopUpIsOpen.time).format('HH:mm'),
-								);
-								setTime(moment(infoPopUpIsOpen.time).format('HH:mm'));
-
-								setServices(infoPopUpIsOpen.services.map(item => item.id));
-								setMasterId(infoPopUpIsOpen.masterAccountId);
-								setAddEventPopupIsOpen(true);
-							},
-						}}
-					>
-						Изменить
-					</Button>
-					<Button
-						type={buttonTypes.red}
-						buttonParams={{
-							onClick: () => deleteBookingMutation.mutate(infoPopUpIsOpen?.id!),
-						}}
-					>
-						Отменить
-					</Button>
-				</div>
-			</Popup>
-
-			<Popup
-				open={addEventPopupIsOpen}
-				closeOnDocumentClick
-				closeOnEscape
-				overlayStyle={{
-					zIndex: 100001,
-				}}
-				onClose={() => setAddEventPopupIsOpen(false)}
-			>
-				{step === 1 && (
-					<div>
-						<div className='modal'>
-							<H2 className='modal_header '>
-								Запись на {moment(date).locale('ru').format('DD MMMM YYYY ')}
-							</H2>
-						</div>
-
-						<>
-							<Select
-								className={s.master_select}
-								classNamePrefix='select'
-								value={
-									masterId !== null && {
-										value: masterId,
-										label:
-											masters.find(master => masterId === master.id)?.name +
-											' ' +
-											masters.find(master => masterId === master.id)?.lastName,
-									}
-								}
-								onChange={value => {
-									if (typeof value === 'boolean' || !value?.value) return;
-
-									setServices([]);
-									setDateAndTime(date, null);
-									setMasterId(value?.value);
-								}}
-								isSearchable={true}
-								name='color'
-								options={masters.map(master => ({
-									value: master.id,
-									label: master.name + ' ' + master.lastName,
-								}))}
-							/>
-						</>
-
-						{masterId && <ChoiceServiceView />}
-						<div>
-							{services.length > 0 && (
-								<TimeListPicker
-									steps={freeTime?.data?.freeTime || []}
-									time={time || undefined}
-									setTime={setTime}
-								/>
-							)}
-						</div>
-						<Button
-							buttonParams={{
-								onClick: () => {
-									if (!date || !time) return;
-
-									setDateAndTime(date.toString(), time);
-
-									if (master) setMasterId(master?.id);
-
-									//@ts-ignore
-									setSalonBranch(branchId);
-									setStep(2);
-								},
-							}}
-							type={date && time && services.length > 0 ? buttonTypes.blue : undefined}
-						>
-							{activeUpdateBookingId ? 'Обновить запись' : 'Добавить запись'}
-						</Button>
-					</div>
-				)}
-
-				{step === 2 && (
-					<div className='modal'>
-						<EntryConfirmView
-							refetch={() => {
-								refetch();
-								refetchAllBooking();
-							}}
-							activeBookingId={activeUpdateBookingId}
-							closeForm={() => {
-								setAddEventPopupIsOpen(false);
-								refetch();
-								refetchAllBooking();
-								setStep(1);
-							}}
-							branchId={branchId!}
-							salonId={salonId!}
-						/>
-					</div>
-				)}
-			</Popup>
-		</>
+			<ScheduleXCalendar calendarApp={calendar} />
+		</div>
 	);
 };
 
-export default Calendar;
+export default FullCalendar;

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { SalonApi } from '@/api/salons.list';
 import { Avatar } from '@/components/ui/avatar';
-import { Box, Center, Flex, Heading, Input, Tabs, Text, Textarea } from '@chakra-ui/react';
+import { Box, Center, Flex, Heading, Input, Tabs, Text, Textarea, QrCode } from '@chakra-ui/react';
 import { Rating } from '@/components/ui/rating';
 import {
 	LuAperture,
@@ -22,6 +22,7 @@ import {
 import { getImagePath } from '@/scripts/helpers/getImagePath';
 import { Button } from '@/components/ui/button';
 import {
+	DialogActionTrigger,
 	DialogBody,
 	DialogCloseTrigger,
 	DialogContent,
@@ -39,6 +40,9 @@ import { toaster } from '@/components/ui/toaster';
 import DotsTab from './tabs/dots';
 import MastersTab from './tabs/masters';
 import ServicesTab from './tabs/services';
+import { ClipboardButton, ClipboardRoot } from '@/components/ui/clipboard';
+import Image from 'next/image';
+import { LogoIcon } from '@/components/images';
 
 interface SalonPageViewProps {
 	id: number;
@@ -111,6 +115,7 @@ const SalonPageView: FC<SalonPageViewProps> = ({ id }) => {
 
 	const [updateSalonModal, setUpdateSalonModal] = useState(false);
 	const [file, setFile] = useState<null | File>(null);
+	const [salonLinkDialog, setSalonLinkDialog] = useState(false);
 
 	return (
 		<main className={`${s.main}`}>
@@ -200,6 +205,53 @@ const SalonPageView: FC<SalonPageViewProps> = ({ id }) => {
 				</DialogContent>
 			</DialogRoot>
 
+			<DialogRoot
+				open={salonLinkDialog}
+				onOpenChange={e => setSalonLinkDialog(e.open)}
+			>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Ссылки на салон </DialogTitle>
+					</DialogHeader>
+					<DialogBody>
+						<ClipboardRoot
+							value={
+								process.env.WEB_APP_URL && salonData?.id
+									? process.env.WEB_APP_URL + '/' + salonData?.id
+									: ''
+							}
+						>
+							<ClipboardButton />
+						</ClipboardRoot>
+
+						<QrCode.Root size={'xl'} marginTop={10} value='https://www.google.com'>
+							<QrCode.Frame>
+								<QrCode.Pattern />
+							</QrCode.Frame>
+							<QrCode.DownloadTrigger
+								asChild
+								fileName='qr-code.png'
+								mimeType='image/png'
+							>
+								<Button
+									variant='outline'
+									size='xs'
+									mt='3'
+								>
+									Download
+								</Button>
+							</QrCode.DownloadTrigger>
+						</QrCode.Root>
+					</DialogBody>
+					<DialogFooter>
+						<DialogActionTrigger asChild>
+							<Button variant='outline'>Закрыть</Button>
+						</DialogActionTrigger>
+					</DialogFooter>
+					<DialogCloseTrigger />
+				</DialogContent>
+			</DialogRoot>
+
 			<Button
 				size={'lg'}
 				position={'absolute'}
@@ -240,7 +292,7 @@ const SalonPageView: FC<SalonPageViewProps> = ({ id }) => {
 									maxW={450}
 									margin={'auto'}
 								>
-									{salonData?.name}
+									<button onClick={() => setSalonLinkDialog(true)}>{salonData?.name}</button>
 								</Heading>
 								<Text
 									maxW={700}
@@ -260,21 +312,25 @@ const SalonPageView: FC<SalonPageViewProps> = ({ id }) => {
 						defaultValue='dots'
 						variant={'enclosed'}
 						size={{ base: 'sm', md: 'lg' }}
+						lazyMount
+						unmountOnExit
 					>
-						<Tabs.List>
-							<Tabs.Trigger value='dots'>
-								<LuMapPin />
-								Точки
-							</Tabs.Trigger>
-							<Tabs.Trigger value='masters'>
-								<LuUser />
-								Сотрудники
-							</Tabs.Trigger>
-							<Tabs.Trigger value='services'>
-								<LuHeartHandshake />
-								Услуги
-							</Tabs.Trigger>
-						</Tabs.List>
+						<Box overflow={'auto'}>
+							<Tabs.List>
+								<Tabs.Trigger value='dots'>
+									<LuMapPin />
+									Точки
+								</Tabs.Trigger>
+								<Tabs.Trigger value='masters'>
+									<LuUser />
+									Сотрудники
+								</Tabs.Trigger>
+								<Tabs.Trigger value='services'>
+									<LuHeartHandshake />
+									Услуги
+								</Tabs.Trigger>
+							</Tabs.List>
+						</Box>
 						<Tabs.Content value='dots'>
 							<DotsTab />
 						</Tabs.Content>

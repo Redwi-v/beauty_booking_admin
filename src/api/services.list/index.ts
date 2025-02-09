@@ -1,38 +1,67 @@
 import apiInstance from '../instance';
-import {
-	ICreateServiceBody,
-	ICreateServiceRes,
-	IGetServicesListParams,
-	IGetServicesListRes,
-	IUpdateServiceBody,
-} from './types';
+import { ICreateService, IService, IServiceTag } from './types';
 
 export const servicesListApi = {
-	createService(body: ICreateServiceBody) {
-		return apiInstance.post<ICreateServiceRes>('/services', body);
+	createService(body: ICreateService) {
+		return apiInstance.post<IService>('/services', body);
 	},
 
-	updateService(serviceId: string | number, body: IUpdateServiceBody) {
-		return apiInstance.patch<ICreateServiceRes>(`/services/${serviceId}`, body);
+	getlist(params: {
+		pagination?: { skip: number; take: number };
+		search?: string;
+		tagId?: number;
+		salonId: number;
+	}) {
+		return apiInstance.get<{ list: IService[]; count: number }>('/services/', {
+			params: params,
+		});
 	},
 
-	getList(params?: IGetServicesListParams) {
-		return apiInstance.get<IGetServicesListRes>('/services', { params });
+	update(id: number, body: IService) {
+		return apiInstance.patch<IService>(`/services/${id}`, body);
 	},
 
-	deleteService(id: string | number) {
-		return apiInstance.delete<ICreateServiceRes>(`/services/${id}`);
+	getOne(id: number) {
+		return apiInstance.get<IService>(`/services/${id}`);
 	},
 
-	addTag(tagName: string) {
-		return apiInstance.post<{ tagName: string }>(`/services/tag/${tagName}`);
+	deleteList(params: { idArr: number[] }) {
+		return apiInstance.delete<{ count: number }>('/services', {
+			params: {
+				deleteArray: params.idArr,
+			},
+		});
+	},
+};
+
+export const servicesTagsApi = {
+	createServiceTag(body: { salonId: number; name: string }) {
+		return apiInstance.post<IServiceTag>('/service-tags', body);
 	},
 
-	getAllTags() {
-		return apiInstance.get<Array<{ tagName: string }>>('/services/tag/all');
+	get(params: {
+		pagination?: { skip: number; take: number };
+		search?: string;
+		takeServices?: boolean;
+		salonId: number;
+	}) {
+		const { salonId, pagination, search, takeServices } = params;
+
+		return apiInstance.get<IServiceTag[]>('/service-tags', {
+			params: {
+				salonId,
+				takeServices,
+				search,
+				...pagination,
+			},
+		});
 	},
 
-	deleteTag(tagName: string | number) {
-		return apiInstance.delete(`services/tag/${tagName}`);
+	findOne(id: number) {
+		return apiInstance.get<IServiceTag>(`/service-tags/${id}`);
+	},
+
+	delete(id: number) {
+		return apiInstance.delete<IServiceTag>(`/service-tags/${id}`);
 	},
 };
