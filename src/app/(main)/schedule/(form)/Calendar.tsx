@@ -5,6 +5,8 @@ import {
 	createViewMonthAgenda,
 	createViewMonthGrid,
 	createViewWeek,
+	viewMonthAgenda,
+	viewWeek,
 } from '@schedule-x/calendar';
 import { createEventsServicePlugin } from '@schedule-x/events-service';
 import { createDragAndDropPlugin } from '@schedule-x/drag-and-drop';
@@ -112,7 +114,8 @@ const FullCalendar: FC<ICalendarProps> = props => {
 		{
 			views: [createViewDay(), createViewWeek(), createViewMonthGrid(), createViewMonthAgenda()],
 			locale: 'ru-RU',
-
+			defaultView: viewMonthAgenda.name,
+			
 			events: [],
 			callbacks: {
 				onDoubleClickEvent(calendarEvent) {

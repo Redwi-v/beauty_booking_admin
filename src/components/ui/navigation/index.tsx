@@ -38,7 +38,7 @@ const Navigation: FC<NavigationProps> = ({ className }) => {
 
 	return (
 		<div className={`${s.navigation} ${cssIf(!!className, className)}`}>
-			{data?.data?.owner?.role === Role.ADMIN && (
+			{/* {data?.data?.owner?.role === Role.ADMIN && (
 				<Link
 					className={s.link}
 					href={'/admins'}
@@ -46,7 +46,7 @@ const Navigation: FC<NavigationProps> = ({ className }) => {
 					<LuPin />
 					<span>Админы</span>
 				</Link>
-			)}
+			)} */}
 
 			<Link
 				className={s.link}

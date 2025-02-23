@@ -24,9 +24,9 @@ const HomePageView: FC<IHomePageViewProps> = ( props ) => {
           BeautyBooking
         </h1>
         <p className={`${ s.sub_title } animate__animated animate__delay-2s animate__fadeInDown`}>Сервис для записи в салоны красоты</p>
-        <Link href={ 'https://t.me/beauty_booking123123_bot' } className={ `${ s.link } ${ s.admin } animate__animated animate__delay-2s animate__fadeInDown` } >
+        {/* <Link href={ 'https://t.me/beauty_booking123123_bot' } className={ `${ s.link } ${ s.admin } animate__animated animate__delay-2s animate__fadeInDown` } >
           Записатся
-        </Link>
+        </Link> */}
         <Link href={ '/login' } className={ `${ s.link } ${ s.telegram } animate__animated animate__delay-2s animate__fadeInDown` } >
           Для владельцев салона
         </Link>

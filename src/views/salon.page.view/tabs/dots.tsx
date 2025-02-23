@@ -42,7 +42,7 @@ import {
 	Stack,
 	Table,
 } from '@chakra-ui/react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { LuBox, LuPointer, LuSearch } from 'react-icons/lu';
 import { Map, Placemark, SearchControl } from '@pbe/react-yandex-maps';
@@ -142,6 +142,7 @@ const DotsTab: FC<IDotsTabProps> = props => {
 		setActivePage(1);
 	}, [searchDebounce]);
 
+
 	const updateSalonBranchMutation = useMutation({
 		mutationFn: (data: IUpdateSalonBranch) => {
 			const promise = salonBranchApi.updateBranch(data.id, data);
@@ -162,6 +163,7 @@ const DotsTab: FC<IDotsTabProps> = props => {
 		},
 		onSuccess: () => {
 			refetchBranches();
+			
 		},
 	});
 
