@@ -34,6 +34,12 @@ footer, header, hgroup, menu, nav, section {
 	display: block;
 }
 
+.sx-react-calendar-wrapper {
+  max-width: 100vw;
+  height: 800px;
+  max-height: 90vh;
+}
+
 input {
 	box-sizing: border-box;
 }

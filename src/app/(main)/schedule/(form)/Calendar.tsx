@@ -11,7 +11,7 @@ import {
 import { createEventsServicePlugin } from '@schedule-x/events-service';
 import { createDragAndDropPlugin } from '@schedule-x/drag-and-drop';
 import { FC, useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { eventsApi } from '@/api/events';
 import { SalonApi } from '@/api/salons.list';
 import { createListCollection, Flex, SelectRoot } from '@chakra-ui/react';
@@ -25,6 +25,11 @@ import { mastersListApi } from '@/api/masters.list';
 import DialogForm from './dialog.form';
 import { createEventModalPlugin } from '@schedule-x/event-modal';
 
+import { createCurrentTimePlugin } from '@schedule-x/current-time';
+import { toaster } from '@/components/ui/toaster';
+
+import { createResizePlugin } from '@schedule-x/resize';
+
 interface ICalendarProps {}
 
 type Inputs = {
@@ -34,6 +39,12 @@ type Inputs = {
 
 	updateEventId: number | undefined;
 };
+
+interface IUpdateEventParams {
+	id: number;
+	start: string;
+	duration: number
+}
 
 const FullCalendar: FC<ICalendarProps> = props => {
 	const {
@@ -49,6 +60,32 @@ const FullCalendar: FC<ICalendarProps> = props => {
 		},
 	});
 	const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
+
+	const updateEventMutation = useMutation({
+		mutationFn: ({ id, start, duration }: IUpdateEventParams) => {
+			const promise = eventsApi.update(id, {
+				start,
+				duration,
+			});
+
+			toaster.promise(promise, {
+				loading: {
+					title: 'Обновление',
+				},
+				success: {
+					title: 'Запись успешно обновлена',
+				},
+				error: {
+					title: 'Что то пошло не так',
+				},
+			});
+
+			return promise;
+		},
+		onSuccess: () => {
+			refetchEvents();
+		},
+	});
 
 	const eventsService = useState(() => createEventsServicePlugin())[0];
 	const eventModal = createEventModalPlugin();
@@ -114,16 +151,37 @@ const FullCalendar: FC<ICalendarProps> = props => {
 		{
 			views: [createViewDay(), createViewWeek(), createViewMonthGrid(), createViewMonthAgenda()],
 			locale: 'ru-RU',
+			weekOptions: {
+				timeAxisFormatOptions: {
+					hour: '2-digit',
+					minute: '2-digit',
+				},
+			},
 			defaultView: viewMonthAgenda.name,
-			
+
 			events: [],
 			callbacks: {
 				onDoubleClickEvent(calendarEvent) {
 					setValue('updateEventId', +calendarEvent.id);
 				},
+				onEventUpdate(event) {
+					const date1 = moment(event.start);
+					const date2 = moment(event.end);
+
+					// Находим разницу в минутах
+					const duration = date2.diff(date1, 'minutes');
+				
+					updateEventMutation.mutate({id: +event.id, start: event.start, duration});
+				},
 			},
 		},
-		[eventsService, eventModal],
+		[
+			eventsService,
+			eventModal,
+			createCurrentTimePlugin(),
+			createDragAndDropPlugin(),
+			createResizePlugin(),
+		],
 	);
 
 	// обновить эвенты в каледаре

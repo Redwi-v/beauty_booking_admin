@@ -15,6 +15,7 @@ export interface IService {
 	serviceTagId: number;
 	name: string;
 	price: number;
+	masterAccountsId: number[]
 	duration: number;
 	bookingId: any;
 	bookingList: any[];
