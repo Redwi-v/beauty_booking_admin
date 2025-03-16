@@ -298,7 +298,7 @@ const DialogForm: FC<DialogFormProps> = ({ refetch, updateEvent, setEventId }) =
 			refetch();
 			setEventId();
 			setIsOpen(false);
-			reset()
+			reset();
 		},
 	});
 
@@ -636,7 +636,9 @@ const DialogForm: FC<DialogFormProps> = ({ refetch, updateEvent, setEventId }) =
 						label='Имя клиента'
 						required
 					>
-						<Input {...register('clientName',  {required: { value: true, message: requiredMessage }})} />
+						<Input
+							{...register('clientName', { required: { value: true, message: requiredMessage } })}
+						/>
 					</Field>
 
 					<Field
