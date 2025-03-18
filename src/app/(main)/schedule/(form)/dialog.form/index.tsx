@@ -670,8 +670,8 @@ const DialogForm: FC<DialogFormProps> = ({ refetch, updateEvent, setEventId }) =
 							value={watch('clientNumber')}
 							onChange={e => setValue('clientNumber', e.target.value)}
 							mask={'+7 999 999 99 99'}
-						>
-							<Input
+							//@ts-ignore
+						><Input
 								size={'2xl'}
 								placeholder='+7 999 999 99 99'
 							/>
