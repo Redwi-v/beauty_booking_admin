@@ -33,9 +33,9 @@ import { createResizePlugin } from '@schedule-x/resize';
 interface ICalendarProps {}
 
 type Inputs = {
-	activeSalonId: string[];
-	activeBranchId: string[];
-	activeMasterId: string[];
+	activeSalonId: number[];
+	activeBranchId: number[];
+	activeMasterId: number[];
 
 	updateEventId: number | undefined;
 };
@@ -43,7 +43,7 @@ type Inputs = {
 interface IUpdateEventParams {
 	id: number;
 	start: string;
-	duration: number
+	duration: number;
 }
 
 const FullCalendar: FC<ICalendarProps> = props => {
@@ -57,9 +57,14 @@ const FullCalendar: FC<ICalendarProps> = props => {
 	} = useForm<Inputs>({
 		defaultValues: {
 			updateEventId: undefined,
+			// activeBranchId: window.localStorage.getItem('activeSalonId')
 		},
 	});
 	const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
+
+	console.log(watch('activeSalonId'));
+	
+
 
 	const updateEventMutation = useMutation({
 		mutationFn: ({ id, start, duration }: IUpdateEventParams) => {
@@ -94,6 +99,17 @@ const FullCalendar: FC<ICalendarProps> = props => {
 		queryKey: ['SALONS'],
 		queryFn: () => SalonApi.getAllSalons({ pagination: { skip: 0, take: 100 } }),
 	});
+
+	
+	useEffect(() => {
+		const localActiveSalonId = window.localStorage.getItem('activeSalonId');
+		const localActiveBranchId = window.localStorage.getItem('activeBranchId');
+		const localActiveMasterId = window.localStorage.getItem('activeMasterId');
+
+		localActiveSalonId && setValue('activeSalonId', [+localActiveSalonId]);
+		localActiveBranchId && setValue('activeBranchId', [+localActiveBranchId]);
+		localActiveMasterId && setValue('activeMasterId', [+localActiveMasterId]);
+	}, [ salons ]);
 
 	const salonsCollection = createListCollection({
 		items: salons?.list ? salons?.list.map(item => ({ label: item.name, value: item.id })) : [],
@@ -170,8 +186,8 @@ const FullCalendar: FC<ICalendarProps> = props => {
 
 					// Находим разницу в минутах
 					const duration = date2.diff(date1, 'minutes');
-				
-					updateEventMutation.mutate({id: +event.id, start: event.start, duration});
+
+					updateEventMutation.mutate({ id: +event.id, start: event.start, duration });
 				},
 			},
 		},
@@ -240,8 +256,12 @@ const FullCalendar: FC<ICalendarProps> = props => {
 						render={({ field }) => (
 							<SelectRoot
 								name={field.name}
+								//@ts-ignore
 								value={field.value}
-								onValueChange={({ value }) => field.onChange(value)}
+								onValueChange={({ value }) => {
+									field.onChange(value);
+									window.localStorage.setItem('activeSalonId', value[0]);
+								}}
 								onInteractOutside={() => field.onBlur()}
 								collection={salonsCollection}
 							>
@@ -276,6 +296,7 @@ const FullCalendar: FC<ICalendarProps> = props => {
 						render={({ field }) => (
 							<SelectRoot
 								name={field.name}
+								//@ts-ignore
 								value={field.value}
 								onValueChange={({ value }) => field.onChange(value)}
 								onInteractOutside={() => field.onBlur()}
@@ -312,6 +333,7 @@ const FullCalendar: FC<ICalendarProps> = props => {
 						render={({ field }) => (
 							<SelectRoot
 								name={field.name}
+								//@ts-ignore
 								value={field.value}
 								onValueChange={({ value }) => field.onChange(value)}
 								onInteractOutside={() => field.onBlur()}
