@@ -613,6 +613,8 @@ const DialogForm: FC<DialogFormProps> = ({ refetch, updateEvent, setEventId }) =
 								setValue('duration', e.target.value);
 								setValue('time', undefined);
 							}}
+
+							//@ts-ignore
 							children={<Input />}
 						/>
 					</Field>
