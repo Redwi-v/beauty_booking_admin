@@ -180,9 +180,9 @@ const MastersScheduleForm: FC<IMastersScheduleFormProps> = props => {
 		if (!inFreeTime) timeValues.push(i);
 	}
 
-	// useEffect(() => {
-	// setActiveBookingTimes(timeValues);
-	// }, [watch('workTimeStart'), watch('workTimeEnd')]);
+	useEffect(() => {
+	setActiveBookingTimes(timeValues);
+	}, [watch('workTimeStart'), watch('workTimeEnd')]);
 
 	const renderedValues = timeValues.map(item => {
 		const hource = String(Math.floor(item / 60));
@@ -209,6 +209,10 @@ const MastersScheduleForm: FC<IMastersScheduleFormProps> = props => {
 			</Button>
 		);
 	});
+
+	useEffect(() => {
+
+	}, [])
 
 	return (
 		<>

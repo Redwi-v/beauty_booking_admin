@@ -17,7 +17,7 @@ export const servicesListApi = {
 		});
 	},
 
-	update(id: number, body: IService) {
+	update(id: number, body: Partial<IService>) {
 		return apiInstance.patch<IService>(`/services/${id}`, body);
 	},
 

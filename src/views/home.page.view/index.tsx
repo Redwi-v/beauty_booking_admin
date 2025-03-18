@@ -1,9 +1,8 @@
 import { FC } from 'react';
 import s from './home.page.view.module.scss'
 import Link from 'next/link';
-import { LogoIcon, MapIcon, MapPointIcon, ScissorsIcon } from '@/components/images';
+import { LogoIcon, MapPointIcon } from '@/components/images';
 import 'animate.css'
-import Image from 'next/image';
 
 interface IHomePageViewProps {
 
@@ -30,7 +29,6 @@ const HomePageView: FC<IHomePageViewProps> = ( props ) => {
         <Link href={ '/login' } className={ `${ s.link } ${ s.telegram } animate__animated animate__delay-2s animate__fadeInDown` } >
           Для владельцев салона
         </Link>
-
 
         <div className={ `${ s.map_points }` }>
           <MapPointIcon className='animate__animated animate__wobble animate__infinite animate__slower animate__delay-1s ' />

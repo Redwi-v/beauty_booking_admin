@@ -797,10 +797,15 @@
   resolved "https://registry.npmmirror.com/@schedule-x/calendar/-/calendar-2.11.0.tgz"
   integrity sha512-qFbciks8XMEgDoe7qFeAkXO9Dall0mlNp0zXL5kfaorRsraMtXibQ755Dp6NrRAxfBICaujl01lYmK4ClgCbig==
 
-"@schedule-x/drag-and-drop@^2.11.0":
-  version "2.11.0"
-  resolved "https://registry.npmmirror.com/@schedule-x/drag-and-drop/-/drag-and-drop-2.11.0.tgz"
-  integrity sha512-aSBWDNtY6GYfdfNcZ3sueMT78GbYe1Raa556RiyA8Xh4N4ltNOCVv8HV8xElAgnDFzuuEIA3U+Q191n7t7+D/g==
+"@schedule-x/current-time@^2.21.1":
+  version "2.21.1"
+  resolved "https://registry.npmmirror.com/@schedule-x/current-time/-/current-time-2.21.1.tgz"
+  integrity sha512-anVmaMGk384oFKfRIzM9XeNqVgWa0tiUONb4P6IdWGtH1RNVBdA/irP09m+vYaMPWTwSUF3pDPu6ij8Bzrkm0g==
+
+"@schedule-x/drag-and-drop@^2.21.1":
+  version "2.21.1"
+  resolved "https://registry.npmmirror.com/@schedule-x/drag-and-drop/-/drag-and-drop-2.21.1.tgz"
+  integrity sha512-trE+8lEX0eGoKb3cQN1c3DZBmYo/srveT+yzRMGdq40N0fcCZAMllnMVsoiCg8r+75Nx/ovh6UG5ajgvgW1vZQ==
 
 "@schedule-x/event-modal@^2.12.1":
   version "2.12.1"
@@ -816,6 +821,16 @@
   version "2.11.0"
   resolved "https://registry.npmmirror.com/@schedule-x/react/-/react-2.11.0.tgz"
   integrity sha512-O2/qnmdiN2RO6vPQ6rrc10F9NY07lqR6vidBCVH6owuLvNZ8tpjepD/245G2GdcGDvCxYju4dGzySaRDILGdMg==
+
+"@schedule-x/resize@^2.21.1":
+  version "2.21.1"
+  resolved "https://registry.npmmirror.com/@schedule-x/resize/-/resize-2.21.1.tgz"
+  integrity sha512-Q+DgnSrZb/z7uwnEOIgSNG4HymbfHPbT0vvXMEwYSreh/7pshliSpu6SuaHF02iHgchqb2OfQxeU5pZiRkZuDQ==
+
+"@schedule-x/scroll-controller@^2.21.1":
+  version "2.21.1"
+  resolved "https://registry.npmmirror.com/@schedule-x/scroll-controller/-/scroll-controller-2.21.1.tgz"
+  integrity sha512-h5RYSbRICJfQ1bywExPEhVZCzjFVE0njIBWxPeHDxosBNXJeyLnNArG3Cr/2Ahd7Kn5w31xcIZuZT//TTiYTFA==
 
 "@schedule-x/theme-default@^2.11.0":
   version "2.11.0"
@@ -1685,10 +1700,13 @@ balanced-match@^1.0.0:
     "@hookform/resolvers" "^3.9.0"
     "@next/env" "^14.2.14"
     "@pbe/react-yandex-maps" "^1.2.5"
-    "@schedule-x/drag-and-drop" "^2.11.0"
+    "@schedule-x/current-time" "^2.21.1"
+    "@schedule-x/drag-and-drop" "^2.21.1"
     "@schedule-x/event-modal" "^2.12.1"
     "@schedule-x/events-service" "^2.11.0"
     "@schedule-x/react" "^2.11.0"
+    "@schedule-x/resize" "^2.21.1"
+    "@schedule-x/scroll-controller" "^2.21.1"
     "@schedule-x/theme-default" "^2.11.0"
     "@tanstack/react-query" "^5.59.15"
     animate.css "^4.1.1"

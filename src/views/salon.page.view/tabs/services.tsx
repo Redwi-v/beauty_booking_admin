@@ -70,9 +70,11 @@ import {
 import { INTERCEPTION_ROUTE_REWRITE_MANIFEST } from 'next/dist/shared/lib/constants';
 import { log } from 'console';
 import { mastersListApi } from '@/api/masters.list';
+import moment from 'moment';
 interface IServicesTabProps {}
 
 interface Inputs {
+	serviceId?: string;
 	search: string;
 	duration: string;
 	name: string;
@@ -109,6 +111,10 @@ const ServicesTab: FC<IServicesTabProps> = props => {
 		if (!data.selectedTag) {
 			setError('selectedTag', { message: 'Поле обязательно' });
 			return;
+		}
+
+		if ( data.serviceId ) {
+			return updateServiceMutation.mutate()
 		}
 
 		addServiceMutation.mutate();
@@ -226,6 +232,37 @@ const ServicesTab: FC<IServicesTabProps> = props => {
 		},
 	});
 
+	const updateServiceMutation = useMutation({
+		mutationFn: () => {
+
+			console.log('====================================');
+			console.log(watch('selectedTag'));
+			console.log('====================================');
+
+			const promise = servicesListApi.update(+watch('serviceId')!, {
+				duration: +watch('duration').split(':')[0] * 60 + +watch('duration').split(':')[1],
+				masterAccountsId: watch('masterAccountsId').map(id => +id),
+				name: watch('name'),
+				price: parseInt(watch('price')),
+				serviceTagId: watch('selectedTag'),
+			});
+
+			toaster.promise(promise, {
+				loading: {
+					title: 'Удаление',
+				},
+				success: {
+					title: 'Запись успешно О',
+				},
+				error: {
+					title: 'Что то пошло не так',
+				},
+			});
+
+			return promise;
+		}
+	})
+
 	const [selection, setSelection] = useState<string[]>([]);
 
 	const paginationItemsCount = 5;
@@ -235,6 +272,9 @@ const ServicesTab: FC<IServicesTabProps> = props => {
 	const [formModalOpen, setFormModalOpen] = useState(false);
 	const [activePage, setActivePage] = useState(1);
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+
+	
 
 	const rows = servicesData?.data?.list.map(item => (
 		<Table.Row
@@ -277,7 +317,13 @@ const ServicesTab: FC<IServicesTabProps> = props => {
 				>
 					<IconButton
 						onClick={() => {
-							// setCreateModalOpen(true);
+							setFormModalOpen(true);
+							setValue('duration', moment().set({hours: 0, minutes: item.duration}).format('HH:mm'))
+							setValue('masterAccountsId', item.masterAccounts.map(master => String(master.id)))
+							setValue('name', item.name)
+							setValue('price', String(item.price))
+							setValue('serviceId', String(item.id))
+							setValue('selectedTag',item.serviceTagId)
 						}}
 					>
 						<LuPen />
@@ -537,7 +583,7 @@ const ServicesTab: FC<IServicesTabProps> = props => {
 							>
 								<Input
 									textAlign={'left'}
-									{...registerWithMask('price', 'currency', {
+									{...registerWithMask('price', 'integer', {
 										mask: '999999 ₽',
 										required: { value: true, message: 'Поля обязательное' },
 										rightAlign: true,

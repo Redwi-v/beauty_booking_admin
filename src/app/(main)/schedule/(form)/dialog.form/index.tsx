@@ -101,11 +101,11 @@ const DialogForm: FC<DialogFormProps> = ({ refetch, updateEvent, setEventId }) =
 					}, 0);
 
 			const promise = eventsApi.create({
-				clientComment: getValues('clientComment'),
-				clientLastName: getValues('clientLastName'),
+				clientComment: getValues('clientComment') || '-',
+				clientLastName: getValues('clientLastName') || '-',
 				clientName: getValues('clientName'),
 				clientNumber: getValues('clientNumber').replace(' ', '').replace('+', ''),
-				description: getValues('description'),
+				description: getValues('description') || '-',
 				duration: duration,
 				masterId: +getValues('masterId')[0],
 				salonBranch: +getValues('salonBranch')[0],
@@ -266,7 +266,7 @@ const DialogForm: FC<DialogFormProps> = ({ refetch, updateEvent, setEventId }) =
 				title: getValues('title'),
 				masterId: +getValues('masterId')[0],
 				start:
-					getValues('start') +
+					getValues('start').split(' ')[0] +
 					' ' +
 					moment()
 						.set({ hours: 0, minutes: getValues('time') })
@@ -298,6 +298,7 @@ const DialogForm: FC<DialogFormProps> = ({ refetch, updateEvent, setEventId }) =
 			refetch();
 			setEventId();
 			setIsOpen(false);
+			reset();
 		},
 	});
 
@@ -633,8 +634,11 @@ const DialogForm: FC<DialogFormProps> = ({ refetch, updateEvent, setEventId }) =
 					<Field
 						marginTop={5}
 						label='Имя клиента'
+						required
 					>
-						<Input {...register('clientName')} />
+						<Input
+							{...register('clientName', { required: { value: true, message: requiredMessage } })}
+						/>
 					</Field>
 
 					<Field
